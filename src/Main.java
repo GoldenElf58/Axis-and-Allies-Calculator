@@ -7,14 +7,14 @@ public class Main {
     static final double WINRATE_MAX_MOE = 0.01;
     static final double IPC_MAX_MOE = 1;
     static final long TIME_LIMIT_MS = 5000;
-    static final int MIN_SIMS = 250000;
+    static final int MIN_SIMS = 500;
 
-    static final Battle battle = Battle.DEFAULT_LAND;
+    static final Battle battle = Battle.SEA_LONG;
 
     enum Battle {
         ASK,
         DEFAULT_LAND,
-        DEFAULT_SEA,
+        SEA_LONG,
     }
 
     public static void main(String[] args) {
@@ -36,6 +36,21 @@ public class Main {
                 defenderMap.put(UnitType.TANK, 1);
                 defenderMap.put(UnitType.FIGHTER, 1);
                 defenderMap.put(UnitType.BOMBER, 1);
+                break;
+            case SEA_LONG:
+                seaBattle = true;
+                attackerMap = new EnumMap<>(UnitType.class);
+                attackerMap.put(UnitType.FIGHTER, 2);
+                attackerMap.put(UnitType.BOMBER, 1);
+                attackerMap.put(UnitType.SUBMARINE, 2);
+                attackerMap.put(UnitType.DESTROYER, 2);
+                attackerMap.put(UnitType.BATTLESHIP, 2);
+                defenderMap = new EnumMap<>(UnitType.class);
+                defenderMap.put(UnitType.FIGHTER, 2);
+                defenderMap.put(UnitType.SUBMARINE, 5);
+                defenderMap.put(UnitType.DESTROYER, 2);
+                defenderMap.put(UnitType.CARRIER, 1);
+                defenderMap.put(UnitType.BATTLESHIP, 1);
                 break;
             case ASK:
             default:

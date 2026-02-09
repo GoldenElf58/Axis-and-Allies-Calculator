@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48e71e48-4692-4ffa-8734-fd6e9a3fdc37" name="Changes" comment="xml stuff">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AAA.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AAA-Calculator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Combat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Combat.java" afterDir="false" />
+    <list default="true" id="48e71e48-4692-4ffa-8734-fd6e9a3fdc37" name="Changes" comment="Add default battles">
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -113,7 +110,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770670708263</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Add default battles">
+      <option name="closed" value="true" />
+      <created>1770671199334</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1770671199334</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -140,7 +145,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit" />
     <MESSAGE value="xml stuff" />
-    <option name="LAST_COMMIT_MESSAGE" value="xml stuff" />
+    <MESSAGE value="Add default battles" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add default battles" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
