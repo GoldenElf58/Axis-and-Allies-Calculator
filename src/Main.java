@@ -9,12 +9,41 @@ public class Main {
     static final long TIME_LIMIT_MS = 5000;
     static final int MIN_SIMS = 250000;
 
+    static final Battle battle = Battle.DEFAULT_LAND;
+
+    enum Battle {
+        ASK,
+        DEFAULT_LAND,
+        DEFAULT_SEA,
+    }
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        boolean seaBattle = Input.getSeaBattle(sc);
-        Map<UnitType, Integer> attackerMap = Input.readArmy(sc, "attacker", false, seaBattle);
-        Map<UnitType, Integer> defenderMap = Input.readArmy(sc, "defender", true, seaBattle);
+        boolean seaBattle;
+        Map<UnitType, Integer> attackerMap;
+        Map<UnitType, Integer> defenderMap;
+        switch (battle) {
+            case DEFAULT_LAND:
+                seaBattle = false;
+                attackerMap = new EnumMap<>(UnitType.class);
+                attackerMap.put(UnitType.INFANTRY, 5);
+                attackerMap.put(UnitType.TANK, 2);
+                attackerMap.put(UnitType.FIGHTER, 1);
+                attackerMap.put(UnitType.BOMBER, 1);
+                defenderMap = new EnumMap<>(UnitType.class);
+                defenderMap.put(UnitType.INFANTRY, 5);
+                defenderMap.put(UnitType.TANK, 1);
+                defenderMap.put(UnitType.FIGHTER, 1);
+                defenderMap.put(UnitType.BOMBER, 1);
+                break;
+            case ASK:
+            default:
+                seaBattle = Input.getSeaBattle(sc);
+                attackerMap = Input.readArmy(sc, "attacker", false, seaBattle);
+                defenderMap = Input.readArmy(sc, "defender", true, seaBattle);
+                break;
+        }
 
         long start = System.currentTimeMillis();
 

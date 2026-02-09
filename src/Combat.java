@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Combat {
 
-    static final boolean CHEAPEST_FIRST = true;
+    static final boolean CHEAPEST_FIRST = false;
 
     static class Result {
         boolean attackerWin;
