@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48e71e48-4692-4ffa-8734-fd6e9a3fdc37" name="Changes" comment="xml thing">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="48e71e48-4692-4ffa-8734-fd6e9a3fdc37" name="Changes" comment="Improve sea battles">
+      <change afterPath="$PROJECT_DIR$/src/UnitInstance.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Combat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Combat.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Input.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Unit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Unit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/UnitType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnitType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UnitType.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +139,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770672104405</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Improve sea battles">
+      <option name="closed" value="true" />
+      <created>1770680409687</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1770680409687</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -169,7 +177,8 @@
     <MESSAGE value="Add default battles" />
     <MESSAGE value="Add sea long battle" />
     <MESSAGE value="xml thing" />
-    <option name="LAST_COMMIT_MESSAGE" value="xml thing" />
+    <MESSAGE value="Improve sea battles" />
+    <option name="LAST_COMMIT_MESSAGE" value="Improve sea battles" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

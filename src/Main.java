@@ -9,7 +9,7 @@ public class Main {
     static final long TIME_LIMIT_MS = 5000;
     static final int MIN_SIMS = 500;
 
-    static final Battle battle = Battle.SEA_1;
+    static final Battle battle = Battle.DEFAULT_LAND;
 
     enum Battle {
         ASK,
@@ -23,62 +23,62 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         boolean seaBattle;
-        Map<UnitType, Integer> attackerMap;
-        Map<UnitType, Integer> defenderMap;
+        Map<Unit, Integer> attackerMap;
+        Map<Unit, Integer> defenderMap;
         switch (battle) {
             case DEFAULT_LAND:
                 seaBattle = false;
-                attackerMap = new EnumMap<>(UnitType.class);
-                attackerMap.put(UnitType.INFANTRY, 5);
-                attackerMap.put(UnitType.TANK, 2);
-                attackerMap.put(UnitType.FIGHTER, 1);
-                attackerMap.put(UnitType.BOMBER, 1);
-                defenderMap = new EnumMap<>(UnitType.class);
-                defenderMap.put(UnitType.INFANTRY, 5);
-                defenderMap.put(UnitType.TANK, 1);
-                defenderMap.put(UnitType.FIGHTER, 1);
-                defenderMap.put(UnitType.BOMBER, 1);
+                attackerMap = new EnumMap<>(Unit.class);
+                attackerMap.put(Unit.INFANTRY, 5);
+                attackerMap.put(Unit.TANK, 2);
+                attackerMap.put(Unit.FIGHTER, 1);
+                attackerMap.put(Unit.BOMBER, 1);
+                defenderMap = new EnumMap<>(Unit.class);
+                defenderMap.put(Unit.INFANTRY, 5);
+                defenderMap.put(Unit.TANK, 1);
+                defenderMap.put(Unit.FIGHTER, 1);
+                defenderMap.put(Unit.BOMBER, 1);
                 break;
             case SEA_1: // 73.4%
                 seaBattle = true;
-                attackerMap = new EnumMap<>(UnitType.class);
-                attackerMap.put(UnitType.FIGHTER, 1);
-                attackerMap.put(UnitType.BOMBER, 1);
-                attackerMap.put(UnitType.SUBMARINE, 2);
-                attackerMap.put(UnitType.DESTROYER, 2);
-                defenderMap = new EnumMap<>(UnitType.class);
-                defenderMap.put(UnitType.FIGHTER, 1);
-                defenderMap.put(UnitType.DESTROYER, 1);
-                defenderMap.put(UnitType.CARRIER, 1);
-                defenderMap.put(UnitType.BATTLESHIP, 1);
+                attackerMap = new EnumMap<>(Unit.class);
+                attackerMap.put(Unit.FIGHTER, 1);
+                attackerMap.put(Unit.BOMBER, 1);
+                attackerMap.put(Unit.SUBMARINE, 2);
+                attackerMap.put(Unit.DESTROYER, 2);
+                defenderMap = new EnumMap<>(Unit.class);
+                defenderMap.put(Unit.FIGHTER, 1);
+                defenderMap.put(Unit.DESTROYER, 1);
+                defenderMap.put(Unit.CARRIER, 1);
+                defenderMap.put(Unit.BATTLESHIP, 1);
                 break;
             case SEA_2: // 77.8%
                 seaBattle = true;
-                attackerMap = new EnumMap<>(UnitType.class);
-                attackerMap.put(UnitType.FIGHTER, 1);
-                attackerMap.put(UnitType.BOMBER, 1);
-                attackerMap.put(UnitType.SUBMARINE, 2);
-                attackerMap.put(UnitType.DESTROYER, 2);
-                defenderMap = new EnumMap<>(UnitType.class);
-                defenderMap.put(UnitType.FIGHTER, 1);
-                defenderMap.put(UnitType.SUBMARINE, 1);
-                defenderMap.put(UnitType.CARRIER, 1);
-                defenderMap.put(UnitType.BATTLESHIP, 1);
+                attackerMap = new EnumMap<>(Unit.class);
+                attackerMap.put(Unit.FIGHTER, 1);
+                attackerMap.put(Unit.BOMBER, 1);
+                attackerMap.put(Unit.SUBMARINE, 2);
+                attackerMap.put(Unit.DESTROYER, 2);
+                defenderMap = new EnumMap<>(Unit.class);
+                defenderMap.put(Unit.FIGHTER, 1);
+                defenderMap.put(Unit.SUBMARINE, 1);
+                defenderMap.put(Unit.CARRIER, 1);
+                defenderMap.put(Unit.BATTLESHIP, 1);
                 break;
             case SEA_LONG:
                 seaBattle = true;
-                attackerMap = new EnumMap<>(UnitType.class);
-                attackerMap.put(UnitType.FIGHTER, 2);
-                attackerMap.put(UnitType.BOMBER, 1);
-                attackerMap.put(UnitType.SUBMARINE, 2);
-                attackerMap.put(UnitType.DESTROYER, 2);
-                attackerMap.put(UnitType.BATTLESHIP, 2);
-                defenderMap = new EnumMap<>(UnitType.class);
-                defenderMap.put(UnitType.FIGHTER, 2);
-                defenderMap.put(UnitType.SUBMARINE, 5);
-                defenderMap.put(UnitType.DESTROYER, 2);
-                defenderMap.put(UnitType.CARRIER, 1);
-                defenderMap.put(UnitType.BATTLESHIP, 1);
+                attackerMap = new EnumMap<>(Unit.class);
+                attackerMap.put(Unit.FIGHTER, 2);
+                attackerMap.put(Unit.BOMBER, 1);
+                attackerMap.put(Unit.SUBMARINE, 2);
+                attackerMap.put(Unit.DESTROYER, 2);
+                attackerMap.put(Unit.BATTLESHIP, 2);
+                defenderMap = new EnumMap<>(Unit.class);
+                defenderMap.put(Unit.FIGHTER, 2);
+                defenderMap.put(Unit.SUBMARINE, 5);
+                defenderMap.put(Unit.DESTROYER, 2);
+                defenderMap.put(Unit.CARRIER, 1);
+                defenderMap.put(Unit.BATTLESHIP, 1);
                 break;
             case ASK:
             default:

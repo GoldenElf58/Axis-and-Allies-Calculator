@@ -33,7 +33,7 @@ public class Combat {
         }
     }
 
-    static Result simulateBattle(List<Unit> attackers, List<Unit> defenders, boolean seaBattle) {
+    static Result simulateBattle(List<UnitInstance> attackers, List<UnitInstance> defenders, boolean seaBattle) {
         int attackerStartIPC = ipcSum(attackers);
         int defenderStartIPC = ipcSum(defenders);
 
@@ -49,25 +49,25 @@ public class Combat {
 
             if (seaBattle) {
                 boolean attackerHasOnlySubs = attackers.stream()
-                        .anyMatch(u -> u.isAlive() && u.type == UnitType.SUBMARINE)
+                        .anyMatch(u -> u.isAlive() && u.type == Unit.SUBMARINE)
                         && attackers.stream()
-                        .noneMatch(u -> u.isAlive() && u.type != UnitType.SUBMARINE);
+                        .noneMatch(u -> u.isAlive() && u.type != Unit.SUBMARINE);
 
                 if (attackerHasOnlySubs && defenders.stream()
-                        .anyMatch(u -> u.isAlive() && u.type.airUnit)
+                        .anyMatch(u -> u.isAlive() && u.type.type == UnitType.AIR)
                         && defenders.stream()
-                        .noneMatch(u -> u.isAlive() && !u.type.airUnit)) break;
+                        .noneMatch(u -> u.isAlive() && u.type.type != UnitType.AIR)) break;
 
 
                 boolean attackerHasOnlyAir = attackers.stream()
-                        .anyMatch(u -> u.isAlive() && u.type.airUnit)
+                        .anyMatch(u -> u.isAlive() && u.type.type == UnitType.AIR)
                         && attackers.stream()
-                        .noneMatch(u -> u.isAlive() && !u.type.airUnit);
+                        .noneMatch(u -> u.isAlive() && u.type.type != UnitType.AIR);
 
                 if (attackerHasOnlyAir && defenders.stream()
-                        .anyMatch(u -> u.isAlive() && u.type == UnitType.SUBMARINE)
+                        .anyMatch(u -> u.isAlive() && u.type == Unit.SUBMARINE)
                         && defenders.stream()
-                        .noneMatch(u -> u.isAlive() && u.type != UnitType.SUBMARINE)) break;
+                        .noneMatch(u -> u.isAlive() && u.type != Unit.SUBMARINE)) break;
             }
 
             boolean defenderHasDestroyer = false, attackerHasDestroyer = false;
@@ -107,37 +107,37 @@ public class Combat {
     }
 
 
-    static Hits rollHits(List<Unit> units, boolean attacking, boolean subsOnly) {
+    static Hits rollHits(List<UnitInstance> units, boolean attacking, boolean subsOnly) {
         Hits hits = new Hits();
-        for (Unit u : units) {
+        for (UnitInstance u : units) {
             if (!u.isAlive()) continue;
-            if (subsOnly && u.type != UnitType.SUBMARINE) continue;
+            if (subsOnly && u.type != Unit.SUBMARINE) continue;
 
             int power = attacking ? u.type.attack : u.type.defense;
             if (power == 0) continue;
             if (ThreadLocalRandom.current().nextInt(6) + 1 <= power) {
-                if (u.type == UnitType.SUBMARINE) hits.subHits++;
-                else if (u.type.airUnit) hits.airHits++;
+                if (u.type == Unit.SUBMARINE) hits.subHits++;
+                else if (u.type.type == UnitType.AIR) hits.airHits++;
                 else hits.otherHits++;
             }
         }
         return hits;
     }
 
-    static void applyHits(List<Unit> units, Hits hits, boolean destroyersPresent) {
+    static void applyHits(List<UnitInstance> units, Hits hits, boolean destroyersPresent) {
         if (hits.airHits + hits.subHits + hits.otherHits <= 0) return;
 
         while (hits.airHits + hits.subHits + hits.otherHits > 0) {
             boolean applied = false;
 
             for (int i = 0; i < units.size(); i++) {
-                Unit u = units.get(i);
+                UnitInstance u = units.get(i);
                 if (!u.isAlive()) continue;
 
                 // Transports can only be hit if nothing else is alive
-                if (u.type == UnitType.TRANSPORT && hasOtherAlive(units)) continue;
+                if (u.type == Unit.TRANSPORT && hasOtherAlive(units)) continue;
 
-                if (u.type == UnitType.BATTLESHIP) {
+                if (u.type == Unit.BATTLESHIP) {
                     if (hits.subHits > 0) hits.subHits--;
                     else if (hits.airHits > 0) hits.airHits--;
                     else if (hits.otherHits > 0) hits.otherHits--;
@@ -147,12 +147,12 @@ public class Combat {
                     continue;
                 }
 
-                if (u.type.airUnit) {
+                if (u.type.type == UnitType.AIR) {
                     if (hits.airHits > 0) hits.airHits--;
                     else if (hits.otherHits > 0) hits.otherHits--;
                     else if (hits.subHits == 0) return;
                     else continue;
-                } else if (u.type == UnitType.SUBMARINE) {
+                } else if (u.type == Unit.SUBMARINE) {
                     if (hits.subHits > 0) hits.subHits--;
                     else if (destroyersPresent && hits.airHits > 0) hits.airHits--;
                     else if (hits.otherHits > 0) hits.otherHits--;
@@ -174,50 +174,50 @@ public class Combat {
         }
     }
 
-    static Comparator<Unit> casualtyComparator(boolean defense, boolean seaBattle) {
+    static Comparator<UnitInstance> casualtyComparator(boolean defense, boolean seaBattle) {
         if (CHEAPEST_FIRST) return Comparator.comparingInt(u -> u.type.cost);
         return Comparator.comparingDouble(u -> seaBattle ? defense ? u.type.seaDefOOL :
                 u.type.seaAtkOOL : defense ? u.type.landDefOOL : u.type.landAtkOOL);
     }
 
-    static boolean hasOtherAlive(List<Unit> units) {
-        for (Unit u : units)
-            if (u.type != UnitType.TRANSPORT && u.isAlive()) return true;
+    static boolean hasOtherAlive(List<UnitInstance> units) {
+        for (UnitInstance u : units)
+            if (u.type != Unit.TRANSPORT && u.isAlive()) return true;
         return false;
     }
 
-    static boolean canFight(List<Unit> units) {
-        for (Unit u : units)
+    static boolean canFight(List<UnitInstance> units) {
+        for (UnitInstance u : units)
             if (u.isAlive() && u.type.attack > 0) return true;
         return false;
     }
 
-    static boolean isAlive(List<Unit> units) {
-        for (Unit u : units)
+    static boolean isAlive(List<UnitInstance> units) {
+        for (UnitInstance u : units)
             if (u.isAlive()) return true;
         return false;
     }
 
-    static boolean hasSubs(List<Unit> u) {
-        return u.stream().anyMatch(x -> x.type == UnitType.SUBMARINE && x.isAlive());
+    static boolean hasSubs(List<UnitInstance> u) {
+        return u.stream().anyMatch(x -> x.type == Unit.SUBMARINE && x.isAlive());
     }
 
-    static boolean hasDestroyer(List<Unit> u) {
-        return u.stream().anyMatch(x -> x.type == UnitType.DESTROYER && x.isAlive());
+    static boolean hasDestroyer(List<UnitInstance> u) {
+        return u.stream().anyMatch(x -> x.type == Unit.DESTROYER && x.isAlive());
     }
 
-    static int ipcSum(List<Unit> units) {
+    static int ipcSum(List<UnitInstance> units) {
         int s = 0;
-        for (Unit u : units)
+        for (UnitInstance u : units)
             if (u.isAlive()) s += u.type.cost;
         return s;
     }
 
-    static List<Unit> buildArmy(Map<UnitType, Integer> map) {
-        List<Unit> list = new ArrayList<>();
+    static List<UnitInstance> buildArmy(Map<Unit, Integer> map) {
+        List<UnitInstance> list = new ArrayList<>();
         for (var e : map.entrySet())
             for (int i = 0; i < e.getValue(); i++)
-                list.add(new Unit(e.getKey()));
+                list.add(new UnitInstance(e.getKey()));
         return list;
     }
 }

@@ -9,24 +9,24 @@ public class Input {
         return sc.nextLine().trim().equalsIgnoreCase("y");
     }
 
-    static Map<UnitType, Integer> readArmy(Scanner sc, String side,
-                                           boolean defender, boolean seaBattle) {
-        Map<UnitType, Integer> map = new EnumMap<>(UnitType.class);
-        for (UnitType t : UnitType.values()) {
-            if (seaBattle && t.landOnly) continue;
-            if (!seaBattle && t.seaOnly) continue;
+    static Map<Unit, Integer> readArmy(Scanner sc, String side,
+                                       boolean defender, boolean seaBattle) {
+        Map<Unit, Integer> map = new EnumMap<>(Unit.class);
+        for (Unit t : Unit.values()) {
+            if (seaBattle && t.type == UnitType.LAND) continue;
+            if (!seaBattle && t.type == UnitType.SEA) continue;
 
             System.out.print(side + " " + t.name().toLowerCase() + ": ");
             String s = sc.nextLine().trim();
             map.put(t, s.isEmpty() ? 0 : Integer.parseInt(s));
         }
-        for (UnitType t : UnitType.values()) {
+        for (Unit t : Unit.values()) {
             map.putIfAbsent(t, 0);
         }
 
         if (seaBattle && defender) {
-            int fighters = map.get(UnitType.FIGHTER);
-            int carriers = map.get(UnitType.CARRIER);
+            int fighters = map.get(Unit.FIGHTER);
+            int carriers = map.get(Unit.CARRIER);
             if (fighters > carriers * 2) {
                 System.out.println("Invalid: defenders may only have 2 fighters per carrier.");
                 return readArmy(sc, side, true, true);
