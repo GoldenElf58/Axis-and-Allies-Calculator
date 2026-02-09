@@ -4,16 +4,18 @@ import static java.lang.Math.sqrt;
 
 public class Main {
 
-    static final double WINRATE_MAX_MOE = 0.01;
+    static final double WINRATE_MAX_MOE = 0.001;
     static final double IPC_MAX_MOE = 1;
     static final long TIME_LIMIT_MS = 5000;
     static final int MIN_SIMS = 500;
 
-    static final Battle battle = Battle.SEA_LONG;
+    static final Battle battle = Battle.SEA_1;
 
     enum Battle {
         ASK,
         DEFAULT_LAND,
+        SEA_1,
+        SEA_2,
         SEA_LONG,
     }
 
@@ -36,6 +38,32 @@ public class Main {
                 defenderMap.put(UnitType.TANK, 1);
                 defenderMap.put(UnitType.FIGHTER, 1);
                 defenderMap.put(UnitType.BOMBER, 1);
+                break;
+            case SEA_1: // 73.4%
+                seaBattle = true;
+                attackerMap = new EnumMap<>(UnitType.class);
+                attackerMap.put(UnitType.FIGHTER, 1);
+                attackerMap.put(UnitType.BOMBER, 1);
+                attackerMap.put(UnitType.SUBMARINE, 2);
+                attackerMap.put(UnitType.DESTROYER, 2);
+                defenderMap = new EnumMap<>(UnitType.class);
+                defenderMap.put(UnitType.FIGHTER, 1);
+                defenderMap.put(UnitType.DESTROYER, 1);
+                defenderMap.put(UnitType.CARRIER, 1);
+                defenderMap.put(UnitType.BATTLESHIP, 1);
+                break;
+            case SEA_2: // 77.8%
+                seaBattle = true;
+                attackerMap = new EnumMap<>(UnitType.class);
+                attackerMap.put(UnitType.FIGHTER, 1);
+                attackerMap.put(UnitType.BOMBER, 1);
+                attackerMap.put(UnitType.SUBMARINE, 2);
+                attackerMap.put(UnitType.DESTROYER, 2);
+                defenderMap = new EnumMap<>(UnitType.class);
+                defenderMap.put(UnitType.FIGHTER, 1);
+                defenderMap.put(UnitType.SUBMARINE, 1);
+                defenderMap.put(UnitType.CARRIER, 1);
+                defenderMap.put(UnitType.BATTLESHIP, 1);
                 break;
             case SEA_LONG:
                 seaBattle = true;
@@ -65,6 +93,8 @@ public class Main {
         int wins = 0;
         int draws = 0;
         int losses = 0;
+        int atkSurvives = 0;
+        int defSurvives = 0;
         List<Double> attackerLosses = new ArrayList<>();
         List<Double> defenderLosses = new ArrayList<>();
 
@@ -77,9 +107,12 @@ public class Main {
                     seaBattle
             );
 
-            wins += r.attackerWin ? 1 : 0;
-            draws += r.draw ? 1 : 0;
-            losses += r.defenderWin ? 1 : 0;
+            if (r.attackerWin) wins++;
+            if (r.draw) draws++;
+            if (r.defenderWin) losses++;
+            if (r.attackerSurvives) atkSurvives++;
+            if (r.defenderSurvives) defSurvives++;
+
             attackerLosses.add((double) r.attackerIPCLoss);
             defenderLosses.add((double) r.defenderIPCLoss);
             sims++;
@@ -103,6 +136,10 @@ public class Main {
         double drawMOE = 1.96 * Math.sqrt((drawMean * (1 - drawMean)) / sims);
         double lossMean = losses / (double) sims;
         double lossMOE = 1.96 * Math.sqrt((lossMean * (1 - lossMean)) / sims);
+        double atkMean = atkSurvives / (double) sims;
+        double atkMOE = 1.96 * Math.sqrt((atkMean * (1 - atkMean)) / sims);
+        double defMean = defSurvives / (double) sims;
+        double defMOE = 1.96 * Math.sqrt((defMean * (1 - defMean)) / sims);
 
         double ipcAtkMean = Stats.mean(attackerLosses);
         double ipcAtkMOE = 1.96 * Stats.std(attackerLosses, ipcAtkMean) / Math.sqrt(sims);
@@ -120,13 +157,15 @@ public class Main {
         System.out.println("Simulations: " + sims);
         System.out.println("Time (ms): " + (System.currentTimeMillis() - start));
         System.out.println();
-        System.out.println("Attacker IPC Loss: " + ((int) (ipcAtkMean * 10)) / 10.0 + " ±" + ((int) ((ipcAtkMOE) * 10)) / 10.0);
+        System.out.println("Attacker IPC Loss: " + ((int) (ipcAtkMean * 10 + 0.5)) / 10.0 + " ±" + ((int) ((ipcAtkMOE) * 10 + 0.5)) / 10.0);
         System.out.println("Attacker IPC Loss 95% outcome range: [" + ipcAtkLow + ", " + ipcAtkHigh + "]");
-        System.out.println("Defender IPC Loss: " + ((int) (ipcDefMean * 10)) / 10.0 + " ±" + ((int) ((ipcDefMOE) * 10)) / 10.0);
+        System.out.println("Defender IPC Loss: " + ((int) (ipcDefMean * 10 + 0.5)) / 10.0 + " ±" + ((int) ((ipcDefMOE) * 10 + 0.5)) / 10.0);
         System.out.println("Defender IPC Loss 95% outcome range: [" + ipcDefLow + ", " + ipcDefHigh + "]");
         System.out.println();
-        System.out.println("Attacker win rate: " + ((int) (winMean * 1000)) / 10.0 + "% ±" + ((int) ((winMOE) * 1000)) / 10.0 + "%");
-        System.out.println("Defender win rate: " + ((int) (lossMean * 1000)) / 10.0 + "% ±" + ((int) ((lossMOE) * 1000)) / 10.0 + "%");
-        System.out.println("Draw rate: " + ((int) (drawMean * 1000)) / 10.0 + "% ±" + ((int) ((drawMOE) * 1000)) / 10.0 + "%");
+        System.out.println("Attacker win rate: " + ((int) (winMean * 1000 + 0.5)) / 10.0 + "% ±" + ((int) ((winMOE) * 1000 + 0.5)) / 10.0 + "%");
+        System.out.println("Defender win rate: " + ((int) (lossMean * 1000 + 0.5)) / 10.0 + "% ±" + ((int) ((lossMOE) * 1000 + 0.5)) / 10.0 + "%");
+        System.out.println("Draw rate: " + ((int) (drawMean * 1000 + 0.5)) / 10.0 + "% ±" + ((int) ((drawMOE) * 1000 + 0.5)) / 10.0 + "%");
+        System.out.println("Atk survive: " + ((int) (atkMean * 1000 + 0.5)) / 10.0 + "% ±" + ((int) ((atkMOE) * 1000 + 0.5)) / 10.0 + "%");
+        System.out.println("Def survive: " + ((int) (defMean * 1000 + 0.5)) / 10.0 + "% ±" + ((int) ((defMOE) * 1000 + 0.5)) / 10.0 + "%");
     }
 }

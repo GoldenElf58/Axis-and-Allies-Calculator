@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48e71e48-4692-4ffa-8734-fd6e9a3fdc37" name="Changes" comment="Add sea long battle" />
+    <list default="true" id="48e71e48-4692-4ffa-8734-fd6e9a3fdc37" name="Changes" comment="xml thing">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Combat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Combat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Input.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Unit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Unit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UnitType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnitType.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -49,7 +56,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+    "settings.editor.selected.configurable": "vcs.Git"
   }
 }]]></component>
   <component name="RunManager">
@@ -124,7 +131,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770671772855</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="xml thing">
+      <option name="closed" value="true" />
+      <created>1770672104405</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1770672104405</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -153,7 +168,8 @@
     <MESSAGE value="xml stuff" />
     <MESSAGE value="Add default battles" />
     <MESSAGE value="Add sea long battle" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add sea long battle" />
+    <MESSAGE value="xml thing" />
+    <option name="LAST_COMMIT_MESSAGE" value="xml thing" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
