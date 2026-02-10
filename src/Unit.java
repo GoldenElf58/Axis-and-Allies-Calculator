@@ -6,8 +6,7 @@ enum Unit {
     SUBMARINE   ( 6, 2, 1, 0, 0, 1, 1, UnitType.SEA),
     DESTROYER   ( 8, 2, 2, 0, 0, 2, 2, UnitType.SEA),
     CARRIER     (12, 1, 2, 0, 0, 4, 4, UnitType.SEA),
-    BATTLESHIP  (16, 4, 4, 0, 0, 6, 5, UnitType.SEA),
-    TRANSPORT   ( 7, 0, 0, 0, 0, 7, 6, UnitType.SEA);
+    BATTLESHIP  (16, 4, 4, 0, 0, 6, 5, UnitType.SEA);
 
     final int cost, attack, defense, landAtkOOL, landDefOOL, seaAtkOOL, seaDefOOL;
     final UnitType type;

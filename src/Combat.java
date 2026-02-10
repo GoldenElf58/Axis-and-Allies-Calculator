@@ -122,12 +122,8 @@ public class Combat {
         while (hits.airHits + hits.subHits + hits.otherHits > 0) {
             boolean applied = false;
 
-            for (int i = 0; i < units.size(); i++) {
-                UnitInstance u = units.get(i);
+            for (UnitInstance u : units) {
                 if (!u.isAlive()) continue;
-
-                // Transports can only be hit if nothing else is alive
-                if (u.type == Unit.TRANSPORT && hasOtherAlive(units)) continue;
 
                 if (u.type == Unit.BATTLESHIP) {
                     if (hits.subHits > 0) hits.subHits--;
@@ -170,12 +166,6 @@ public class Combat {
         if (CHEAPEST_FIRST) return Comparator.comparingInt(u -> u.type.cost);
         return Comparator.comparingDouble(u -> seaBattle ? defense ? u.type.seaDefOOL :
                 u.type.seaAtkOOL : defense ? u.type.landDefOOL : u.type.landAtkOOL);
-    }
-
-    static boolean hasOtherAlive(List<UnitInstance> units) {
-        for (UnitInstance u : units)
-            if (u.type != Unit.TRANSPORT && u.isAlive()) return true;
-        return false;
     }
 
     static boolean canFight(List<UnitInstance> units) {
