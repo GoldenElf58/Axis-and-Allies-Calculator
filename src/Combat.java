@@ -14,8 +14,6 @@ public class Combat {
         boolean defenderWin;
         boolean attackerSurvives;
         boolean defenderSurvives;
-        int attackerIPCLoss;
-        int defenderIPCLoss;
     }
 
     static class Hits {
@@ -34,9 +32,6 @@ public class Combat {
     }
 
     static Result simulateBattle(List<UnitInstance> attackers, List<UnitInstance> defenders, boolean seaBattle) {
-        int attackerStartIPC = ipcSum(attackers);
-        int defenderStartIPC = ipcSum(defenders);
-
         attackers.sort(casualtyComparator(false, seaBattle));
         defenders.sort(casualtyComparator(true, seaBattle));
 
@@ -100,9 +95,6 @@ public class Combat {
         r.defenderWin = !r.attackerWin && !r.draw;
         r.attackerSurvives = aAlive;
         r.defenderSurvives = dAlive;
-
-        r.attackerIPCLoss = attackerStartIPC - ipcSum(attackers);
-        r.defenderIPCLoss = defenderStartIPC - ipcSum(defenders);
         return r;
     }
 
@@ -204,13 +196,6 @@ public class Combat {
 
     static boolean hasDestroyer(List<UnitInstance> u) {
         return u.stream().anyMatch(x -> x.type == Unit.DESTROYER && x.isAlive());
-    }
-
-    static int ipcSum(List<UnitInstance> units) {
-        int s = 0;
-        for (UnitInstance u : units)
-            if (u.isAlive()) s += u.type.cost;
-        return s;
     }
 
     static List<UnitInstance> buildArmy(Map<Unit, Integer> map) {

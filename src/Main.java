@@ -1,15 +1,12 @@
 import java.util.*;
 
-import static java.lang.Math.sqrt;
-
 public class Main {
 
-    static final double WINRATE_MAX_MOE = 0.001;
-    static final double IPC_MAX_MOE = 1;
+    static final double WINRATE_MAX_MOE = 0.01;
     static final long TIME_LIMIT_MS = 5000;
-    static final int MIN_SIMS = 500;
+    static final int MIN_SIMS = 2_000_000;
 
-    static final Battle battle = Battle.ASK;
+    static final Battle battle = Battle.DEFAULT_LAND;
 
     public static void main(String[] args) {
         Map<Unit, Integer> attackerMap = battle.getAttackerMap();
@@ -23,9 +20,6 @@ public class Main {
         int losses = 0;
         int atkSurvives = 0;
         int defSurvives = 0;
-        List<Double> attackerLosses = new ArrayList<>();
-        List<Double> defenderLosses = new ArrayList<>();
-
         int sims = 0;
 
         while (true) {
@@ -41,8 +35,6 @@ public class Main {
             if (r.attackerSurvives) atkSurvives++;
             if (r.defenderSurvives) defSurvives++;
 
-            attackerLosses.add((double) r.attackerIPCLoss);
-            defenderLosses.add((double) r.defenderIPCLoss);
             sims++;
 
             if (System.currentTimeMillis() - start > TIME_LIMIT_MS) break;
@@ -50,12 +42,7 @@ public class Main {
 
             double winMean = wins / (double) sims;
             double winMOE = 1.96 * Math.sqrt((winMean * (1 - winMean)) / sims);
-            if (winMOE > WINRATE_MAX_MOE) continue;
-
-            double ipcMean = Stats.mean(attackerLosses);
-            double ipcStd = Stats.std(attackerLosses, ipcMean);
-            double ipcMOE = 1.96 * ipcStd / sqrt(sims);
-            if (ipcMOE <= IPC_MAX_MOE) break;
+            if (winMOE <= WINRATE_MAX_MOE) break;
         }
 
         double winMean = wins / (double) sims;
@@ -69,26 +56,9 @@ public class Main {
         double defMean = defSurvives / (double) sims;
         double defMOE = 1.96 * Math.sqrt((defMean * (1 - defMean)) / sims);
 
-        double ipcAtkMean = Stats.mean(attackerLosses);
-        double ipcAtkMOE = 1.96 * Stats.std(attackerLosses, ipcAtkMean) / Math.sqrt(sims);
-        Collections.sort(attackerLosses);
-        double ipcAtkLow = attackerLosses.get((int) (0.025 * sims));
-        double ipcAtkHigh = attackerLosses.get((int) (0.975 * sims));
-
-        double ipcDefMean = Stats.mean(defenderLosses);
-        double ipcDefMOE = 1.96 * Stats.std(defenderLosses, ipcDefMean) / Math.sqrt(sims);
-        Collections.sort(defenderLosses);
-        double ipcDefLow = defenderLosses.get((int) (0.025 * sims));
-        double ipcDefHigh = defenderLosses.get((int) (0.975 * sims));
-
         System.out.println("\n");
         System.out.println("Simulations: " + sims);
         System.out.println("Time (ms): " + (System.currentTimeMillis() - start));
-        System.out.println();
-        System.out.println("Attacker IPC Loss: " + ((int) (ipcAtkMean * 10 + 0.5)) / 10.0 + " ±" + ((int) ((ipcAtkMOE) * 10 + 0.5)) / 10.0);
-        System.out.println("Attacker IPC Loss 95% outcome range: [" + ipcAtkLow + ", " + ipcAtkHigh + "]");
-        System.out.println("Defender IPC Loss: " + ((int) (ipcDefMean * 10 + 0.5)) / 10.0 + " ±" + ((int) ((ipcDefMOE) * 10 + 0.5)) / 10.0);
-        System.out.println("Defender IPC Loss 95% outcome range: [" + ipcDefLow + ", " + ipcDefHigh + "]");
         System.out.println();
         System.out.println("Attacker win rate: " + ((int) (winMean * 1000 + 0.5)) / 10.0 + "% ±" + ((int) ((winMOE) * 1000 + 0.5)) / 10.0 + "%");
         System.out.println("Defender win rate: " + ((int) (lossMean * 1000 + 0.5)) / 10.0 + "% ±" + ((int) ((lossMOE) * 1000 + 0.5)) / 10.0 + "%");
