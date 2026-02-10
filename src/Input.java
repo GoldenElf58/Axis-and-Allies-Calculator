@@ -15,6 +15,7 @@ public class Input {
         for (Unit t : Unit.values()) {
             if (seaBattle && t.type == UnitType.LAND) continue;
             if (!seaBattle && t.type == UnitType.SEA) continue;
+            if (defender && seaBattle && t == Unit.BOMBER) continue;
 
             System.out.print(side + " " + t.name().toLowerCase() + ": ");
             String s = sc.nextLine().trim();
