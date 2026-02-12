@@ -2,11 +2,11 @@ import java.util.*;
 
 public class Main {
 
-    static final double WINRATE_MAX_MOE = 0.01;
+    static final double WINRATE_MAX_MOE = 10;
     static final long TIME_LIMIT_MS = 5000;
-    static final int MIN_SIMS = 2_000_000;
+    static final int MIN_SIMS = 5;
 
-    static final Battle battle = Battle.DEFAULT_LAND;
+    static final Battle battle = Battle.SEA_3;
 
     public static void main(String[] args) {
         Map<Unit, Integer> attackerMap = battle.getAttackerMap();
@@ -23,6 +23,7 @@ public class Main {
         int sims = 0;
 
         while (true) {
+            if (Combat.DEBUG) System.out.println("\n\nSim " + sims);
             Combat.Result r = Combat.simulateBattle(
                     Combat.buildArmy(attackerMap),
                     Combat.buildArmy(defenderMap),

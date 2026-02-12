@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Combat {
 
     static final boolean CHEAPEST_FIRST = false;
+    static final boolean DEBUG = true;
 
     static class Result {
         boolean attackerWin;
@@ -76,14 +77,21 @@ public class Combat {
                 Hits strikeDHits = null;
                 if (subStrikeA) strikeAHits = rollHits(attackers, true, true);
                 if (subStrikeD) strikeDHits = rollHits(defenders, false, true);
-                if (subStrikeA) applyHits(defenders, strikeAHits, false);
-                if (subStrikeD) applyHits(attackers, strikeDHits, false);
+                if (subStrikeA) applyHits(defenders, strikeAHits, false, true, true);
+                if (subStrikeD) applyHits(attackers, strikeDHits, false, false, true);
             }
 
             Hits aHits = rollHits(attackers, true, false);
             Hits dHits = rollHits(defenders, false, false);
-            applyHits(defenders, aHits, attackerHasDestroyer);
-            applyHits(attackers, dHits, defenderHasDestroyer);
+            applyHits(defenders, aHits, attackerHasDestroyer, true, seaBattle);
+            applyHits(attackers, dHits, defenderHasDestroyer, false, seaBattle);
+
+            if (DEBUG) {
+                System.out.println();
+                System.out.println("Attacker: " + attackers);
+                System.out.println("Defender: " + defenders);
+                System.out.println("Hits: " + aHits + ", " + dHits);
+            }
         }
 
         Result r = new Result();
@@ -99,6 +107,14 @@ public class Combat {
     }
 
 
+    /**
+     * Rolls hits for a list of units
+     *
+     * @param units List of units to roll hits for
+     * @param attacking Whether the units are attacking or defending
+     * @param subsOnly Whether to only roll hits for submarines
+     * @return Hits object containing the number of hits for each type of unit
+     */
     static Hits rollHits(List<UnitInstance> units, boolean attacking, boolean subsOnly) {
         Hits hits = new Hits();
         for (UnitInstance u : units) {
@@ -116,13 +132,21 @@ public class Combat {
         return hits;
     }
 
-    static void applyHits(List<UnitInstance> units, Hits hits, boolean destroyersPresent) {
+    /**
+     * Applies hits to a list of units
+     *
+     * @param units List of units to apply hits to
+     * @param hits Hits object containing the number of hits for each type of unit
+     * @param destroyersPresent Whether enemy destroyers are present to affect hit application
+     */
+    static void applyHits(List<UnitInstance> units, Hits hits, boolean destroyersPresent, boolean defense, boolean seaBattle) {
         if (hits.airHits + hits.subHits + hits.otherHits <= 0) return;
 
         while (hits.airHits + hits.subHits + hits.otherHits > 0) {
             boolean applied = false;
 
-            for (UnitInstance u : units) {
+            for (int i = 0; i < units.size(); i++) {
+                UnitInstance u = units.get(i);
                 if (!u.isAlive()) continue;
 
                 if (u.type == Unit.BATTLESHIP) {
@@ -132,6 +156,7 @@ public class Combat {
                     else return;
                     u.hits++;
                     applied = true;
+                    units.sort(casualtyComparator(defense, seaBattle));
                     continue;
                 }
 
@@ -155,6 +180,7 @@ public class Combat {
                 u.hits = 2;
 
                 applied = true;
+                units.sort(casualtyComparator(defense, seaBattle));
             }
 
             // If we looped and could not apply a hit, stop to avoid infinite loop
@@ -164,8 +190,16 @@ public class Combat {
 
     static Comparator<UnitInstance> casualtyComparator(boolean defense, boolean seaBattle) {
         if (CHEAPEST_FIRST) return Comparator.comparingInt(u -> u.type.cost);
-        return Comparator.comparingDouble(u -> seaBattle ? defense ? u.type.seaDefOOL :
-                u.type.seaAtkOOL : defense ? u.type.landDefOOL : u.type.landAtkOOL);
+        
+        return Comparator.comparingDouble((UnitInstance u) -> {
+            // Battleships with 0 hits get the highest priority (lowest sort value)
+            if (u.type == Unit.BATTLESHIP && u.hits == 0) {
+                return -1.0;
+            }
+            // Normal OOL sorting for all other units
+            return seaBattle ? defense ? u.type.seaDefOOL : u.type.seaAtkOOL 
+                             : defense ? u.type.landDefOOL : u.type.landAtkOOL;
+        });
     }
 
     static boolean canFight(List<UnitInstance> units) {
