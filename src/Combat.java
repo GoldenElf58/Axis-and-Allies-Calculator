@@ -6,8 +6,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Combat {
 
-    static final boolean CHEAPEST_FIRST = false;
-
     static class Result {
         boolean attackerWin;
         boolean draw;
@@ -204,8 +202,6 @@ public class Combat {
     }
 
     static Comparator<UnitInstance> casualtyComparator(boolean defense, boolean seaBattle) {
-        if (CHEAPEST_FIRST) return Comparator.comparingInt(u -> u.type.cost);
-        
         return Comparator.comparingDouble((UnitInstance u) -> {
             if (u.type == Unit.BATTLESHIP && u.hits == 0) return -1.0;
             return seaBattle ? defense ? u.type.seaDefOOL : u.type.seaAtkOOL
