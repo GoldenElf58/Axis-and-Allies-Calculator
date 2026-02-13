@@ -7,7 +7,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Combat {
 
     static final boolean CHEAPEST_FIRST = false;
-    static final boolean DEBUG = true;
 
     static class Result {
         boolean attackerWin;
@@ -83,11 +82,14 @@ public class Combat {
 
             Hits aHits = rollHits(attackers, true, false);
             Hits dHits = rollHits(defenders, false, false);
+            if (Main.DEBUG) {
+                System.out.println();
+                System.out.println("Hits: " + aHits + ", " + dHits);
+            }
             applyHits(defenders, aHits, attackerHasDestroyer, true, seaBattle);
             applyHits(attackers, dHits, defenderHasDestroyer, false, seaBattle);
 
-            if (DEBUG) {
-                System.out.println();
+            if (Main.DEBUG) {
                 System.out.println("Attacker: " + attackers);
                 System.out.println("Defender: " + defenders);
                 System.out.println("Hits: " + aHits + ", " + dHits);
@@ -157,7 +159,7 @@ public class Combat {
                     u.hits++;
                     applied = true;
                     units.sort(casualtyComparator(defense, seaBattle));
-                    continue;
+                    break;
                 }
 
                 if (u.type.type == UnitType.AIR) {
@@ -180,10 +182,9 @@ public class Combat {
                 u.hits = 2;
 
                 applied = true;
-                units.sort(casualtyComparator(defense, seaBattle));
+                break;
             }
 
-            // If we looped and could not apply a hit, stop to avoid infinite loop
             if (!applied) break;
         }
     }
@@ -192,12 +193,8 @@ public class Combat {
         if (CHEAPEST_FIRST) return Comparator.comparingInt(u -> u.type.cost);
         
         return Comparator.comparingDouble((UnitInstance u) -> {
-            // Battleships with 0 hits get the highest priority (lowest sort value)
-            if (u.type == Unit.BATTLESHIP && u.hits == 0) {
-                return -1.0;
-            }
-            // Normal OOL sorting for all other units
-            return seaBattle ? defense ? u.type.seaDefOOL : u.type.seaAtkOOL 
+            if (u.type == Unit.BATTLESHIP && u.hits == 0) return -1.0;
+            return seaBattle ? defense ? u.type.seaDefOOL : u.type.seaAtkOOL
                              : defense ? u.type.landDefOOL : u.type.landAtkOOL;
         });
     }

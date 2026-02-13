@@ -2,9 +2,10 @@ import java.util.*;
 
 public class Main {
 
-    static final double WINRATE_MAX_MOE = 10;
+    static final double WINRATE_MAX_MOE = .01;
     static final long TIME_LIMIT_MS = 5000;
-    static final int MIN_SIMS = 5;
+    static final int MIN_SIMS = 500;
+    static final boolean DEBUG = false;
 
     static final Battle battle = Battle.SEA_3;
 
@@ -23,7 +24,7 @@ public class Main {
         int sims = 0;
 
         while (true) {
-            if (Combat.DEBUG) System.out.println("\n\nSim " + sims);
+            if (DEBUG) System.out.println("\n\nSim " + sims);
             Combat.Result r = Combat.simulateBattle(
                     Combat.buildArmy(attackerMap),
                     Combat.buildArmy(defenderMap),
