@@ -6,8 +6,9 @@ public class Main {
     static final long TIME_LIMIT_MS = 5000;
     static final int MIN_SIMS = 500;
     static final boolean DEBUG = false;
+    static final int N_DEBUG = 10;
 
-    static final Battle battle = Battle.SEA_3;
+    static final Battle battle = Battle.ASK;
 
     public static void main(String[] args) {
         Map<Unit, Integer> attackerMap = battle.getAttackerMap();
@@ -24,12 +25,14 @@ public class Main {
         int sims = 0;
 
         while (true) {
-            if (DEBUG) System.out.println("\n\nSim " + sims);
+            if (DEBUG && N_DEBUG <= sims) break;
+            if (DEBUG) System.out.println("\n\nSim " + (sims + 1));
             Combat.Result r = Combat.simulateBattle(
                     Combat.buildArmy(attackerMap),
                     Combat.buildArmy(defenderMap),
                     seaBattle
             );
+            if (DEBUG) System.out.println(r);
 
             if (r.attackerWin) wins++;
             if (r.draw) draws++;

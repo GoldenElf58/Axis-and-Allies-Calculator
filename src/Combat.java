@@ -14,6 +14,13 @@ public class Combat {
         boolean defenderWin;
         boolean attackerSurvives;
         boolean defenderSurvives;
+
+        @Override
+        public String toString() {
+            return "Result(attackerWin=" + attackerWin + ", draw=" + draw + ", defenderWin=" +
+                    defenderWin + ", attackerSurvives=" + attackerSurvives + ", defenderSurvives=" +
+                    defenderSurvives + ')';
+        }
     }
 
     static class Hits {
@@ -38,6 +45,7 @@ public class Combat {
         boolean defenderCanFight;
         boolean attackerCanFight;
         while (true) {
+            if (Main.DEBUG) System.out.println();
             attackerCanFight = canFight(attackers);
             defenderCanFight = canFight(defenders);
             if (!attackerCanFight || !defenderCanFight) break;
@@ -65,27 +73,32 @@ public class Combat {
                         .noneMatch(u -> u.isAlive() && u.type != Unit.SUBMARINE)) break;
             }
 
-            boolean defenderHasDestroyer = false, attackerHasDestroyer = false;
+            boolean defenderHasDestroyer = false, attackerHasDestroyer = false,
+                    subStrikeA = false, subStrikeD = false;
             if (seaBattle) {
                 defenderHasDestroyer = hasDestroyer(defenders);
                 attackerHasDestroyer = hasDestroyer(attackers);
-                boolean subStrikeA = !defenderHasDestroyer && hasSubs(attackers);
-                boolean subStrikeD = !attackerHasDestroyer && hasSubs(defenders);
+                subStrikeA = !defenderHasDestroyer && hasSubs(attackers);
+                subStrikeD = !attackerHasDestroyer && hasSubs(defenders);
 
                 Hits strikeAHits = null;
                 Hits strikeDHits = null;
-                if (subStrikeA) strikeAHits = rollHits(attackers, true, true);
-                if (subStrikeD) strikeDHits = rollHits(defenders, false, true);
+                if (subStrikeA) strikeAHits = rollHits(attackers, true, true, false);
+                if (subStrikeD) strikeDHits = rollHits(defenders, false, true, false);
+                if (Main.DEBUG) System.out.println("Sub Hits: " + strikeAHits + ", " + strikeDHits);
                 if (subStrikeA) applyHits(defenders, strikeAHits, false, true, true);
                 if (subStrikeD) applyHits(attackers, strikeDHits, false, false, true);
+                if (Main.DEBUG) {
+                    System.out.println("Attacker: " + attackers);
+                    System.out.println("Defender: " + defenders);
+                }
+                if (subStrikeA) defenderHasDestroyer = hasDestroyer(defenders);
+                if (subStrikeD) attackerHasDestroyer = hasDestroyer(attackers);
             }
 
-            Hits aHits = rollHits(attackers, true, false);
-            Hits dHits = rollHits(defenders, false, false);
-            if (Main.DEBUG) {
-                System.out.println();
-                System.out.println("Hits: " + aHits + ", " + dHits);
-            }
+            Hits aHits = rollHits(attackers, true, false, subStrikeA);
+            Hits dHits = rollHits(defenders, false, false, subStrikeD);
+            if (Main.DEBUG) System.out.println("Hits: " + aHits + ", " + dHits);
             applyHits(defenders, aHits, attackerHasDestroyer, true, seaBattle);
             applyHits(attackers, dHits, defenderHasDestroyer, false, seaBattle);
 
@@ -117,10 +130,12 @@ public class Combat {
      * @param subsOnly Whether to only roll hits for submarines
      * @return Hits object containing the number of hits for each type of unit
      */
-    static Hits rollHits(List<UnitInstance> units, boolean attacking, boolean subsOnly) {
+    static Hits rollHits(List<UnitInstance> units, boolean attacking, boolean subsOnly,
+                         boolean noSubs) {
         Hits hits = new Hits();
         for (UnitInstance u : units) {
             if (!u.isAlive()) continue;
+            if (noSubs && u.type == Unit.SUBMARINE) continue;
             if (subsOnly && u.type != Unit.SUBMARINE) continue;
 
             int power = attacking ? u.type.attack : u.type.defense;
@@ -147,8 +162,7 @@ public class Combat {
         while (hits.airHits + hits.subHits + hits.otherHits > 0) {
             boolean applied = false;
 
-            for (int i = 0; i < units.size(); i++) {
-                UnitInstance u = units.get(i);
+            for (UnitInstance u : units) {
                 if (!u.isAlive()) continue;
 
                 if (u.type == Unit.BATTLESHIP) {
@@ -158,7 +172,7 @@ public class Combat {
                     else return;
                     u.hits++;
                     applied = true;
-                    units.sort(casualtyComparator(defense, seaBattle));
+                    if (u.hits == 1) units.sort(casualtyComparator(defense, seaBattle));
                     break;
                 }
 
