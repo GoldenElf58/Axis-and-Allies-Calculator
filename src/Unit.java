@@ -1,4 +1,4 @@
-enum Unit {
+public enum Unit {
     INFANTRY    ( 3, 1, 2, 1, 1, 0, 0, UnitType.LAND),
     TANK        ( 6, 3, 3, 2, 2, 0, 0, UnitType.LAND),
     FIGHTER     (10, 3, 4, 3, 4, 3, 3, UnitType.AIR),
