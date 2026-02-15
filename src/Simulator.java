@@ -1,5 +1,3 @@
-import java.util.Map;
-
 public class Simulator {
 
     public record SimulationResult(int simulations, int timeNs, double winRate, double winMOE,
@@ -20,10 +18,6 @@ public class Simulator {
 
     public static SimulationResult simulate(Battle battle, int minSims, double timeLimit,
                                             double maxMOE, boolean debug, int nDebug) {
-        Map<Unit, Integer> attackerMap = battle.getAttackerMap();
-        Map<Unit, Integer> defenderMap = battle.getDefenderMap();
-        boolean seaBattle = battle.isSeaBattle();
-
         long start = System.nanoTime();
 
         int wins = 0;
@@ -36,11 +30,8 @@ public class Simulator {
         while (true) {
             if (debug && nDebug <= sims) break;
             if (debug) System.out.println("\n\nSim " + (sims + 1));
-            Combat.Result r = Combat.simulateBattle(
-                    Combat.buildArmy(attackerMap),
-                    Combat.buildArmy(defenderMap),
-                    seaBattle
-            );
+            OngoingBattle ongoingBattle = new OngoingBattle(battle);
+            Combat.Result r = Combat.simulateBattle(ongoingBattle);
             if (debug) System.out.println(r);
 
             if (r.attackerWin) wins++;
@@ -56,7 +47,7 @@ public class Simulator {
 
             double winMean = wins / (double) sims;
             double winMOE = 1.96 * Math.sqrt((winMean * (1 - winMean)) / sims);
-            if (winMOE <= maxMOE) break;
+            if (winMOE < maxMOE) break;
         }
 
         double winMean = wins / (double) sims;

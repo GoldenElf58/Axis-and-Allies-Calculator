@@ -1,8 +1,4 @@
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Combat {
 
@@ -21,10 +17,19 @@ public class Combat {
         }
     }
 
-    static class Hits {
+    public static class Hits {
         int airHits;
         int subHits;
         int otherHits;
+
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+        public boolean remove(boolean air, boolean sub) {
+            if (sub && subHits > 0) subHits--;
+            else if (air && airHits > 0) airHits--;
+            else if (otherHits > 0) otherHits--;
+            else return false;
+            return true;
+        }
 
         @Override
         public String toString() {
@@ -36,80 +41,71 @@ public class Combat {
         }
     }
 
-    static Result simulateBattle(List<UnitInstance> attackers, List<UnitInstance> defenders, boolean seaBattle) {
-        attackers.sort(casualtyComparator(false, seaBattle));
-        defenders.sort(casualtyComparator(true, seaBattle));
-
+    static Result simulateBattle(OngoingBattle battle) {
         boolean defenderCanFight;
         boolean attackerCanFight;
         while (true) {
             if (Main.DEBUG) System.out.println();
-            attackerCanFight = canFight(attackers);
-            defenderCanFight = canFight(defenders);
+            attackerCanFight = battle.attackerNumTroops() > 0;
+            defenderCanFight = battle.defenderNumTroops() > 0;
             if (!attackerCanFight || !defenderCanFight) break;
 
-            if (seaBattle) {
-                boolean attackerHasOnlySubs = attackers.stream()
-                        .anyMatch(u -> u.isAlive() && u.type == Unit.SUBMARINE)
-                        && attackers.stream()
-                        .noneMatch(u -> u.isAlive() && u.type != Unit.SUBMARINE);
+            if (battle.seaBattle) {
+                boolean attackerHasOnlySubs = battle.attackerNumTroops() == battle.aSub;
+                boolean defenderHasOnlyAir =
+                        battle.defenderNumTroops() == battle.dBom + battle.dFig;
 
-                if (attackerHasOnlySubs && defenders.stream()
-                        .anyMatch(u -> u.isAlive() && u.type.type == UnitType.AIR)
-                        && defenders.stream()
-                        .noneMatch(u -> u.isAlive() && u.type.type != UnitType.AIR)) break;
+                if (attackerHasOnlySubs && defenderHasOnlyAir) {
+                    if (Main.DEBUG) System.out.println("Only air vs only subs");
+                    break;
+                }
 
 
-                boolean attackerHasOnlyAir = attackers.stream()
-                        .anyMatch(u -> u.isAlive() && u.type.type == UnitType.AIR)
-                        && attackers.stream()
-                        .noneMatch(u -> u.isAlive() && u.type.type != UnitType.AIR);
+                boolean attackerHasOnlyAir =
+                        battle.attackerNumTroops() == battle.aBom + battle.aFig;
+                boolean defenderHasOnlySubs = battle.defenderNumTroops() == battle.dSub;
 
-                if (attackerHasOnlyAir && defenders.stream()
-                        .anyMatch(u -> u.isAlive() && u.type == Unit.SUBMARINE)
-                        && defenders.stream()
-                        .noneMatch(u -> u.isAlive() && u.type != Unit.SUBMARINE)) break;
+                if (attackerHasOnlyAir && defenderHasOnlySubs) {
+                    if (Main.DEBUG) System.out.println("Only air vs only subs");
+                    break;
+                }
             }
 
             boolean defenderHasDestroyer = false, attackerHasDestroyer = false,
                     subStrikeA = false, subStrikeD = false;
-            if (seaBattle) {
-                defenderHasDestroyer = hasDestroyer(defenders);
-                attackerHasDestroyer = hasDestroyer(attackers);
-                subStrikeA = !defenderHasDestroyer && hasSubs(attackers);
-                subStrikeD = !attackerHasDestroyer && hasSubs(defenders);
+            if (battle.seaBattle) {
+                defenderHasDestroyer = battle.dDes > 0;
+                attackerHasDestroyer = battle.aDes > 0;
+                subStrikeA = !defenderHasDestroyer && battle.aSub > 0;
+                subStrikeD = !attackerHasDestroyer && battle.dSub > 0;
 
                 Hits strikeAHits = null;
                 Hits strikeDHits = null;
-                if (subStrikeA) strikeAHits = rollHits(attackers, true, true, false);
-                if (subStrikeD) strikeDHits = rollHits(defenders, false, true, false);
+                if (subStrikeA) strikeAHits = battle.rollAttackerHits(true, false);
+                if (subStrikeD) strikeDHits = battle.rollDefenderHits(true, false);
                 if (Main.DEBUG) System.out.println("Sub Hits: " + strikeAHits + ", " + strikeDHits);
-                if (subStrikeA) applyHits(defenders, strikeAHits, false, true, true);
-                if (subStrikeD) applyHits(attackers, strikeDHits, false, false, true);
-                if (Main.DEBUG) {
-                    System.out.println("Attacker: " + attackers);
-                    System.out.println("Defender: " + defenders);
-                }
-                if (subStrikeA) defenderHasDestroyer = hasDestroyer(defenders);
-                if (subStrikeD) attackerHasDestroyer = hasDestroyer(attackers);
+                if (subStrikeA) battle.applyHits(strikeAHits, true, false);
+                if (subStrikeD) battle.applyHits(strikeDHits, false, false);
+                if (Main.DEBUG) System.out.println(battle);
+                if (subStrikeA) defenderHasDestroyer = battle.dDes > 0;
+                if (subStrikeD) attackerHasDestroyer = battle.aDes > 0;
             }
 
-            Hits aHits = rollHits(attackers, true, false, subStrikeA);
-            Hits dHits = rollHits(defenders, false, false, subStrikeD);
+            Hits aHits = battle.rollAttackerHits(false, subStrikeA);
+            Hits dHits = battle.rollDefenderHits(false, subStrikeD);
             if (Main.DEBUG) System.out.println("Hits: " + aHits + ", " + dHits);
-            applyHits(defenders, aHits, attackerHasDestroyer, true, seaBattle);
-            applyHits(attackers, dHits, defenderHasDestroyer, false, seaBattle);
+            battle.applyHits(aHits, true, attackerHasDestroyer);
+            battle.applyHits(dHits, false, defenderHasDestroyer);
 
             if (Main.DEBUG) {
-                System.out.println("Attacker: " + attackers);
-                System.out.println("Defender: " + defenders);
+                System.out.println(battle);
                 System.out.println("Hits: " + aHits + ", " + dHits);
             }
         }
 
         Result r = new Result();
-        boolean aAlive = isAlive(attackers);
-        boolean dAlive = isAlive(defenders);
+        boolean aAlive = battle.attackerNumTroops() > 0;
+        boolean dAlive = battle.defenderNumTroops() > 0;
 
         r.attackerWin = aAlive && !defenderCanFight;
         r.draw = attackerCanFight == defenderCanFight;
@@ -119,121 +115,8 @@ public class Combat {
         return r;
     }
 
-
-    /**
-     * Rolls hits for a list of units
-     *
-     * @param units List of units to roll hits for
-     * @param attacking Whether the units are attacking or defending
-     * @param subsOnly Whether to only roll hits for submarines
-     * @return Hits object containing the number of hits for each type of unit
-     */
-    static Hits rollHits(List<UnitInstance> units, boolean attacking, boolean subsOnly,
-                         boolean noSubs) {
-        Hits hits = new Hits();
-        for (UnitInstance u : units) {
-            if (!u.isAlive()) continue;
-            if (noSubs && u.type == Unit.SUBMARINE) continue;
-            if (subsOnly && u.type != Unit.SUBMARINE) continue;
-
-            int power = attacking ? u.type.attack : u.type.defense;
-            if (power == 0) continue;
-            if (ThreadLocalRandom.current().nextInt(6) + 1 <= power) {
-                if (u.type == Unit.SUBMARINE) hits.subHits++;
-                else if (u.type.type == UnitType.AIR) hits.airHits++;
-                else hits.otherHits++;
-            }
-        }
-        return hits;
-    }
-
-    /**
-     * Applies hits to a list of units
-     *
-     * @param units List of units to apply hits to
-     * @param hits Hits object containing the number of hits for each type of unit
-     * @param destroyersPresent Whether enemy destroyers are present to affect hit application
-     */
-    static void applyHits(List<UnitInstance> units, Hits hits, boolean destroyersPresent, boolean defense, boolean seaBattle) {
-        if (hits.airHits + hits.subHits + hits.otherHits <= 0) return;
-
-        while (hits.airHits + hits.subHits + hits.otherHits > 0) {
-            boolean applied = false;
-
-            for (UnitInstance u : units) {
-                if (!u.isAlive()) continue;
-
-                if (u.type == Unit.BATTLESHIP) {
-                    if (hits.subHits > 0) hits.subHits--;
-                    else if (hits.airHits > 0) hits.airHits--;
-                    else if (hits.otherHits > 0) hits.otherHits--;
-                    else return;
-                    u.hits++;
-                    applied = true;
-                    if (u.hits == 1) units.sort(casualtyComparator(defense, seaBattle));
-                    break;
-                }
-
-                if (u.type.type == UnitType.AIR) {
-                    if (hits.airHits > 0) hits.airHits--;
-                    else if (hits.otherHits > 0) hits.otherHits--;
-                    else if (hits.subHits == 0) return;
-                    else continue;
-                } else if (u.type == Unit.SUBMARINE) {
-                    if (hits.subHits > 0) hits.subHits--;
-                    else if (destroyersPresent && hits.airHits > 0) hits.airHits--;
-                    else if (hits.otherHits > 0) hits.otherHits--;
-                    else if (hits.airHits == 0) return;
-                    else continue;
-                } else {
-                    if (hits.subHits > 0) hits.subHits--;
-                    else if (hits.airHits > 0) hits.airHits--;
-                    else if (hits.otherHits > 0) hits.otherHits--;
-                    else return;
-                }
-                u.hits = 2;
-
-                applied = true;
-                break;
-            }
-
-            if (!applied) break;
-        }
-    }
-
-    static Comparator<UnitInstance> casualtyComparator(boolean defense, boolean seaBattle) {
-        return Comparator.comparingDouble((UnitInstance u) -> {
-            if (u.type == Unit.BATTLESHIP && u.hits == 0) return -1.0;
-            return seaBattle ? defense ? u.type.seaDefOOL : u.type.seaAtkOOL
-                             : defense ? u.type.landDefOOL : u.type.landAtkOOL;
-        });
-    }
-
-    static boolean canFight(List<UnitInstance> units) {
-        for (UnitInstance u : units)
-            if (u.isAlive() && u.type.attack > 0) return true;
-        return false;
-    }
-
-    static boolean isAlive(List<UnitInstance> units) {
-        for (UnitInstance u : units)
-            if (u.isAlive()) return true;
-        return false;
-    }
-
-    static boolean hasSubs(List<UnitInstance> u) {
-        return u.stream().anyMatch(x -> x.type == Unit.SUBMARINE && x.isAlive());
-    }
-
-    static boolean hasDestroyer(List<UnitInstance> u) {
-        return u.stream().anyMatch(x -> x.type == Unit.DESTROYER && x.isAlive());
-    }
-
-    static List<UnitInstance> buildArmy(Map<Unit, Integer> map) {
-        List<UnitInstance> list = new ArrayList<>();
-        for (var e : map.entrySet())
-            for (int i = 0; i < e.getValue(); i++)
-                list.add(new UnitInstance(e.getKey()));
-        return list;
+    static Comparator<? super Unit> casualtyComparator(boolean defense, boolean seaBattle) {
+        return Comparator.comparingDouble((Unit u) -> seaBattle ? defense ? u.seaDefOOL :
+                u.seaAtkOOL : defense ? u.landDefOOL : u.landAtkOOL);
     }
 }
