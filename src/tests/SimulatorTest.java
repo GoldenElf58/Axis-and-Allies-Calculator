@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 public class SimulatorTest {
     
     public final static double MOE_MULTIPLIER = 1.5;
-    public final static double DEFAULT_MAX_MOE = .002;
+    public final static double DEFAULT_MAX_MOE = .0015;
     public final static double EPSILON = .00001;
 
     @Test
@@ -26,8 +26,8 @@ public class SimulatorTest {
 
     @Test
     public void sea1Battle() {
-        double expectedAttackerSurviveRate = .760;
-        double expectedDefenderSurviveRate = .186;
+        double expectedAttackerSurviveRate = .759;
+        double expectedDefenderSurviveRate = .188;
         double maxMOE = DEFAULT_MAX_MOE;
         Simulator.SimulationResult r = Simulator.simulate(Battle.SEA_1, 500, 5000, maxMOE, false, 10);
         assertTrue("Attacker survive rate " + r.attackerSurviveRate() + " not close enough to " + expectedAttackerSurviveRate,
@@ -110,7 +110,7 @@ public class SimulatorTest {
 
     @Test
     public void sea7Battle() {
-        double expectedAttackerSurviveRate = .493;
+        double expectedAttackerSurviveRate = .492;
         double expectedDefenderSurviveRate = .466;
         double maxMOE = DEFAULT_MAX_MOE;
         Simulator.SimulationResult r = Simulator.simulate(Battle.SEA_7, 500, 5000, maxMOE, false, 10);
@@ -120,6 +120,36 @@ public class SimulatorTest {
                 abs(r.defenderSurviveRate() - expectedDefenderSurviveRate) < maxMOE * MOE_MULTIPLIER);
         assertTrue("Attacker survive MOE " + r.attackerSurviveMOE() + " over " + maxMOE,
                 r.attackerSurviveMOE() - EPSILON <= maxMOE);
+    }
+
+    @Test
+    public void sea8Battle() {
+        double expectedAttackerSurviveRate = .690;
+        double expectedDefenderSurviveRate = .489;
+        double maxMOE = DEFAULT_MAX_MOE;
+        Simulator.SimulationResult r = Simulator.simulate(Battle.SEA_8, 500, 5000, maxMOE, false,
+                10);
+        assertTrue("Attacker survive rate " + r.attackerSurviveRate() + " not close enough to " + expectedAttackerSurviveRate,
+                abs(r.attackerSurviveRate() - expectedAttackerSurviveRate) < maxMOE * MOE_MULTIPLIER);
+        assertTrue("Defender survive rate " + r.defenderSurviveRate() + " not close enough to " + expectedDefenderSurviveRate,
+                abs(r.defenderSurviveRate() - expectedDefenderSurviveRate) < maxMOE * MOE_MULTIPLIER);
+        assertTrue("Attacker survive MOE " + r.attackerSurviveMOE() + " over " + maxMOE,
+                r.attackerSurviveMOE() - EPSILON <= maxMOE);
+    }
+
+    @Test
+    public void sea9Battle() {
+        double expectedAttackerSurviveRate = .554;
+        double expectedDefenderSurviveRate = .714;
+        double maxMOE = DEFAULT_MAX_MOE;
+        Simulator.SimulationResult r = Simulator.simulate(Battle.SEA_9, 500, 5000, maxMOE, false,
+                10);
+        assertTrue("Attacker survive rate " + r.attackerSurviveRate() + " not close enough to " + expectedAttackerSurviveRate,
+                abs(r.attackerSurviveRate() - expectedAttackerSurviveRate) < maxMOE * MOE_MULTIPLIER);
+        assertTrue("Defender survive rate " + r.defenderSurviveRate() + " not close enough to " + expectedDefenderSurviveRate,
+                abs(r.defenderSurviveRate() - expectedDefenderSurviveRate) < maxMOE * MOE_MULTIPLIER);
+        assertTrue("Attacker survive MOE " + r.winMOE() + " over " + maxMOE,
+                r.winMOE() - EPSILON <= maxMOE);
     }
 
     @Test
