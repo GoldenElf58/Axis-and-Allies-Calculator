@@ -5,11 +5,26 @@ public class Main {
     static final int MIN_SIMS = 3000;
     static final boolean DEBUG = false;
     static final int N_DEBUG = 10;
+    static final boolean BENCHMARK = false;
 
-    static final Battle battle = Battle.SEA_7;
+    static final Battle battle = Battle.ASK;
 
     public static void main(String[] args) {
-        System.out.println(Simulator.simulate(battle, MIN_SIMS, TIME_LIMIT_MS, WINRATE_MAX_MOE,
-                DEBUG, N_DEBUG));
+        if (battle.ask) battle.getBattle();
+        if (BENCHMARK && !DEBUG) {
+            System.out.println("Warm up...");
+            Simulator.simulate(battle, MIN_SIMS * 500, TIME_LIMIT_MS, WINRATE_MAX_MOE,
+                    false, 0);
+            System.out.println("Done");
+            int n = 100;
+            long start = System.nanoTime();
+            for (int i = 0; i < n; i++) {
+                Simulator.simulate(battle, MIN_SIMS, TIME_LIMIT_MS, WINRATE_MAX_MOE, DEBUG, N_DEBUG);
+            }
+            System.out.println("Avg Time: " + (System.nanoTime() - start) / n / 1_000 + " µs");
+        } else {
+            System.out.println(Simulator.simulate(battle, MIN_SIMS, TIME_LIMIT_MS, WINRATE_MAX_MOE,
+                    DEBUG, N_DEBUG));
+        }
     }
 }

@@ -31,7 +31,7 @@ public class Simulator {
             if (debug && nDebug <= sims) break;
             if (debug) System.out.println("\n\nSim " + (sims + 1));
             OngoingBattle ongoingBattle = new OngoingBattle(battle);
-            Combat.Result r = Combat.simulateBattle(ongoingBattle);
+            Combat.Result r = Combat.simulateBattle(ongoingBattle, debug);
             if (debug) System.out.println(r);
 
             if (r.attackerWin) wins++;

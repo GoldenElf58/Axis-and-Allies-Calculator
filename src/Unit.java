@@ -47,7 +47,7 @@ public enum Unit {
         int power = attacking ? attack : defense;
         int hits = 0;
         for (int i = 0; i < numRolls; i++)
-            if (ThreadLocalRandom.current().nextInt(6) + 1 <= power) hits++;
+            if (ThreadLocalRandom.current().nextInt(6) < power) hits++;
         return hits;
     }
 

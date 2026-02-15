@@ -67,14 +67,13 @@ public class OngoingBattle {
     public void applyHits(Combat.Hits hits, boolean defense, boolean destroyersPresent) {
         while (hits.airHits + hits.subHits + hits.otherHits > 0) {
             boolean applied = false;
-            if ((defense ? dExtra : aExtra ) > 0) {
+            if ((defense ? dExtra : aExtra) > 0) {
                 if (!hits.remove(true, true)) continue;
                 if (defense) dExtra--;
                 else aExtra--;
                 continue;
             }
             for (Unit u : Unit.getUnitOrder(defense, seaBattle)) {
-                if (applied) break;
                 switch (u) {
                     case INFANTRY -> {
                         if ((defense ? dInf : aInf) == 0) continue;
@@ -82,43 +81,50 @@ public class OngoingBattle {
                         if (defense) dInf--;
                         else aInf--;
                         applied = true;
-                    } case TANK -> {
+                    }
+                    case TANK -> {
                         if ((defense ? dTank : aTank) == 0) continue;
                         if (!hits.remove(true, true)) continue;
                         if (defense) dTank--;
                         else aTank--;
                         applied = true;
-                    } case FIGHTER -> {
+                    }
+                    case FIGHTER -> {
                         if ((defense ? dFig : aFig) == 0) continue;
                         if (!hits.remove(true, false)) continue;
                         if (defense) dFig--;
                         else aFig--;
                         applied = true;
-                    } case BOMBER -> {
+                    }
+                    case BOMBER -> {
                         if ((defense ? dBom : aBom) == 0) continue;
                         if (!hits.remove(true, false)) continue;
                         if (defense) dBom--;
                         else aBom--;
                         applied = true;
-                    } case SUBMARINE -> {
+                    }
+                    case SUBMARINE -> {
                         if ((defense ? dSub : aSub) == 0) continue;
                         if (!hits.remove(destroyersPresent, true)) continue;
                         if (defense) dSub--;
                         else aSub--;
                         applied = true;
-                    } case DESTROYER -> {
+                    }
+                    case DESTROYER -> {
                         if ((defense ? dDes : aDes) == 0) continue;
                         if (!hits.remove(true, true)) continue;
                         if (defense) dDes--;
                         else aDes--;
                         applied = true;
-                    } case CARRIER -> {
+                    }
+                    case CARRIER -> {
                         if ((defense ? dACC : aACC) == 0) continue;
                         if (!hits.remove(true, true)) continue;
                         if (defense) dACC--;
                         else aACC--;
                         applied = true;
-                    } case BATTLESHIP -> {
+                    }
+                    case BATTLESHIP -> {
                         if ((defense ? dBat : aBat) == 0) continue;
                         if (!hits.remove(true, true)) continue;
                         if (defense) dBat--;
@@ -126,6 +132,7 @@ public class OngoingBattle {
                         applied = true;
                     }
                 }
+                if (applied) break;
             }
             if (!applied) break;
         }

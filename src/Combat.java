@@ -41,11 +41,11 @@ public class Combat {
         }
     }
 
-    static Result simulateBattle(OngoingBattle battle) {
+    static Result simulateBattle(OngoingBattle battle, boolean debug) {
         boolean defenderCanFight;
         boolean attackerCanFight;
         while (true) {
-            if (Main.DEBUG) System.out.println();
+            if (debug) System.out.println();
             attackerCanFight = battle.attackerNumTroops() > 0;
             defenderCanFight = battle.defenderNumTroops() > 0;
             if (!attackerCanFight || !defenderCanFight) break;
@@ -56,7 +56,7 @@ public class Combat {
                         battle.defenderNumTroops() == battle.dBom + battle.dFig;
 
                 if (attackerHasOnlySubs && defenderHasOnlyAir) {
-                    if (Main.DEBUG) System.out.println("Only air vs only subs");
+                    if (debug) System.out.println("Only air vs only subs");
                     break;
                 }
 
@@ -66,7 +66,7 @@ public class Combat {
                 boolean defenderHasOnlySubs = battle.defenderNumTroops() == battle.dSub;
 
                 if (attackerHasOnlyAir && defenderHasOnlySubs) {
-                    if (Main.DEBUG) System.out.println("Only air vs only subs");
+                    if (debug) System.out.println("Only air vs only subs");
                     break;
                 }
             }
@@ -83,21 +83,21 @@ public class Combat {
                 Hits strikeDHits = null;
                 if (subStrikeA) strikeAHits = battle.rollAttackerHits(true, false);
                 if (subStrikeD) strikeDHits = battle.rollDefenderHits(true, false);
-                if (Main.DEBUG) System.out.println("Sub Hits: " + strikeAHits + ", " + strikeDHits);
+                if (debug) System.out.println("Sub Hits: " + strikeAHits + ", " + strikeDHits);
                 if (subStrikeA) battle.applyHits(strikeAHits, true, false);
                 if (subStrikeD) battle.applyHits(strikeDHits, false, false);
-                if (Main.DEBUG) System.out.println(battle);
+                if (debug) System.out.println(battle);
                 if (subStrikeA) defenderHasDestroyer = battle.dDes > 0;
                 if (subStrikeD) attackerHasDestroyer = battle.aDes > 0;
             }
 
             Hits aHits = battle.rollAttackerHits(false, subStrikeA);
             Hits dHits = battle.rollDefenderHits(false, subStrikeD);
-            if (Main.DEBUG) System.out.println("Hits: " + aHits + ", " + dHits);
+            if (debug) System.out.println("Hits: " + aHits + ", " + dHits);
             battle.applyHits(aHits, true, attackerHasDestroyer);
             battle.applyHits(dHits, false, defenderHasDestroyer);
 
-            if (Main.DEBUG) {
+            if (debug) {
                 System.out.println(battle);
                 System.out.println("Hits: " + aHits + ", " + dHits);
             }
