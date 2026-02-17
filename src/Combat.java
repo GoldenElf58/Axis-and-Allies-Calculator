@@ -8,6 +8,10 @@ public class Combat {
         boolean defenderWin;
         boolean attackerSurvives;
         boolean defenderSurvives;
+        boolean attackerWin1;
+        boolean defenderWin1;
+        boolean attackerWin2;
+        boolean defenderWin2;
 
         @Override
         public String toString() {
@@ -106,10 +110,15 @@ public class Combat {
         Result r = new Result();
         boolean aAlive = battle.attackerNumTroops() > 0;
         boolean dAlive = battle.defenderNumTroops() > 0;
+        boolean aCanTake = battle.canAttackerTake();
 
-        r.attackerWin = aAlive && !defenderCanFight;
-        r.draw = attackerCanFight == defenderCanFight;
+        r.attackerWin = aAlive && !dAlive;
+        r.draw = aAlive == dAlive;
         r.defenderWin = !r.attackerWin && !r.draw;
+        r.attackerWin1 = r.attackerWin && aCanTake;
+        r.attackerWin2 = r.attackerWin && !r.attackerWin1;
+        r.defenderWin1 = dAlive && !aAlive;
+        r.defenderWin2 = r.draw;
         r.attackerSurvives = aAlive;
         r.defenderSurvives = dAlive;
         return r;

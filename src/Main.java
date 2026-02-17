@@ -5,9 +5,9 @@ public class Main {
     static final int MIN_SIMS = 3000;
     static final boolean DEBUG = false;
     static final int N_DEBUG = 10;
-    static final boolean BENCHMARK = true;
+    static final boolean BENCHMARK = false;
 
-    static final Battle battle = Battle.SEA_LONG;
+    static final Battle battle = Battle.LAND_1;
 
     public static void main(String[] args) {
         if (battle.ask) battle.getBattle();
@@ -18,9 +18,8 @@ public class Main {
             System.out.println("Warm Up Complete");
             int n = 1000;
             long start = System.nanoTime();
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < n; i++)
                 Simulator.simulate(battle, MIN_SIMS, TIME_LIMIT_MS, WINRATE_MAX_MOE, DEBUG, N_DEBUG);
-            }
             System.out.println("Avg Time: " + (System.nanoTime() - start) / n / 1_000 + " µs");
         } else {
             System.out.println("Battle: " + battle.name() + "\n");

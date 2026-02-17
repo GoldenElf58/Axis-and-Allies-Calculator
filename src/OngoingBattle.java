@@ -138,6 +138,10 @@ public class OngoingBattle {
         }
     }
 
+    public boolean canAttackerTake() {
+        return aInf + aTank > 0;
+    }
+
     @Override
     public String toString() {
         return "Hits(" +
