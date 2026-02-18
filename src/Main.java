@@ -7,7 +7,7 @@ public class Main {
     static final int N_DEBUG = 10;
     static final boolean BENCHMARK = true;
 
-    static final Battle battle = Battle.LAND_1;
+    static final Battle battle = Battle.SEA_LONG;
 
     public static void main(String[] args) {
         if (battle.ask) battle.getBattle();
