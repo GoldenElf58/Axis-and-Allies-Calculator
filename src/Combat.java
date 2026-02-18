@@ -28,8 +28,8 @@ public class Combat {
 
         @SuppressWarnings("BooleanMethodIsAlwaysInverted")
         public boolean remove(boolean air, boolean sub) {
-            if (sub && subHits > 0) subHits--;
-            else if (air && airHits > 0) airHits--;
+            if (subHits > 0 && sub) subHits--;
+            else if (airHits > 0 && air) airHits--;
             else if (otherHits > 0) otherHits--;
             else return false;
             return true;
@@ -116,7 +116,7 @@ public class Combat {
         r.draw = aAlive == dAlive;
         r.defenderWin = !r.attackerWin && !r.draw;
         r.attackerWin1 = r.attackerWin && aCanTake;
-        r.attackerWin2 = r.attackerWin && !r.attackerWin1;
+        r.attackerWin2 = r.attackerWin && !aCanTake;
         r.defenderWin1 = dAlive && !aAlive;
         r.defenderWin2 = r.draw;
         r.attackerSurvives = aAlive;

@@ -38,13 +38,17 @@ public class OngoingBattle {
         Combat.Hits hits = new Combat.Hits();
         if (!noSubs) hits.subHits += Unit.SUBMARINE.rollHits(true, aSub);
         if (!subsOnly) {
-            hits.otherHits += Unit.INFANTRY.rollHits(true, aInf);
-            hits.otherHits += Unit.TANK.rollHits(true, aTank);
+            if (!seaBattle) {
+                hits.otherHits += Unit.INFANTRY.rollHits(true, aInf);
+                hits.otherHits += Unit.TANK.rollHits(true, aTank);
+            }
             hits.airHits += Unit.FIGHTER.rollHits(true, aFig);
             hits.airHits += Unit.BOMBER.rollHits(true, aBom);
-            hits.otherHits += Unit.DESTROYER.rollHits(true, aDes);
-            hits.otherHits += Unit.CARRIER.rollHits(true, aACC);
-            hits.otherHits += Unit.BATTLESHIP.rollHits(true, aBat);
+            if (seaBattle) {
+                hits.otherHits += Unit.DESTROYER.rollHits(true, aDes);
+                hits.otherHits += Unit.CARRIER.rollHits(true, aACC);
+                hits.otherHits += Unit.BATTLESHIP.rollHits(true, aBat);
+            }
         }
         return hits;
     }
@@ -53,13 +57,16 @@ public class OngoingBattle {
         Combat.Hits hits = new Combat.Hits();
         if (!noSubs) hits.subHits += Unit.SUBMARINE.rollHits(false, dSub);
         if (!subsOnly) {
-            hits.otherHits += Unit.INFANTRY.rollHits(false, dInf);
-            hits.otherHits += Unit.TANK.rollHits(false, dTank);
+            if (!seaBattle) {
+                hits.otherHits += Unit.INFANTRY.rollHits(false, dInf);
+                hits.otherHits += Unit.TANK.rollHits(false, dTank);
+            }
             hits.airHits += Unit.FIGHTER.rollHits(false, dFig);
-            hits.airHits += Unit.BOMBER.rollHits(false, dBom);
-            hits.otherHits += Unit.DESTROYER.rollHits(false, dDes);
-            hits.otherHits += Unit.CARRIER.rollHits(false, dACC);
-            hits.otherHits += Unit.BATTLESHIP.rollHits(false, dBat);
+            if (seaBattle) {
+                hits.otherHits += Unit.DESTROYER.rollHits(false, dDes);
+                hits.otherHits += Unit.CARRIER.rollHits(false, dACC);
+                hits.otherHits += Unit.BATTLESHIP.rollHits(false, dBat);
+            }
         }
         return hits;
     }
@@ -73,58 +80,58 @@ public class OngoingBattle {
                 else aExtra--;
                 continue;
             }
-            for (Unit u : Unit.getUnitOrder(defense, seaBattle)) {
+            for (int u : Unit.getUnitIntOrder(defense, seaBattle)) {
                 switch (u) {
-                    case INFANTRY -> {
+                    case 0 -> {
                         if ((defense ? dInf : aInf) == 0) continue;
                         if (!hits.remove(true, true)) continue;
                         if (defense) dInf--;
                         else aInf--;
                         applied = true;
                     }
-                    case TANK -> {
+                    case 1 -> {
                         if ((defense ? dTank : aTank) == 0) continue;
                         if (!hits.remove(true, true)) continue;
                         if (defense) dTank--;
                         else aTank--;
                         applied = true;
                     }
-                    case FIGHTER -> {
+                    case 2 -> {
                         if ((defense ? dFig : aFig) == 0) continue;
                         if (!hits.remove(true, false)) continue;
                         if (defense) dFig--;
                         else aFig--;
                         applied = true;
                     }
-                    case BOMBER -> {
+                    case 3 -> {
                         if ((defense ? dBom : aBom) == 0) continue;
                         if (!hits.remove(true, false)) continue;
                         if (defense) dBom--;
                         else aBom--;
                         applied = true;
                     }
-                    case SUBMARINE -> {
+                    case 4 -> {
                         if ((defense ? dSub : aSub) == 0) continue;
                         if (!hits.remove(destroyersPresent, true)) continue;
                         if (defense) dSub--;
                         else aSub--;
                         applied = true;
                     }
-                    case DESTROYER -> {
+                    case 5 -> {
                         if ((defense ? dDes : aDes) == 0) continue;
                         if (!hits.remove(true, true)) continue;
                         if (defense) dDes--;
                         else aDes--;
                         applied = true;
                     }
-                    case CARRIER -> {
+                    case 6 -> {
                         if ((defense ? dACC : aACC) == 0) continue;
                         if (!hits.remove(true, true)) continue;
                         if (defense) dACC--;
                         else aACC--;
                         applied = true;
                     }
-                    case BATTLESHIP -> {
+                    case 7 -> {
                         if ((defense ? dBat : aBat) == 0) continue;
                         if (!hits.remove(true, true)) continue;
                         if (defense) dBat--;
