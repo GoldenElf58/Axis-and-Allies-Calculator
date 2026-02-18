@@ -116,7 +116,7 @@ public class Combat {
         r.draw = aAlive == dAlive;
         r.defenderWin = !r.attackerWin && !r.draw;
         r.attackerWin1 = r.attackerWin && aCanTake;
-        r.attackerWin2 = r.attackerWin && !r.attackerWin1;
+        r.attackerWin2 = r.attackerWin && !aCanTake;
         r.defenderWin1 = dAlive && !aAlive;
         r.defenderWin2 = r.draw;
         r.attackerSurvives = aAlive;

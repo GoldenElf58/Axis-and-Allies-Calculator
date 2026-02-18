@@ -1,5 +1,3 @@
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum Unit {
@@ -14,22 +12,42 @@ public enum Unit {
 
     final int attack, defense, landAtkOOL, landDefOOL, seaAtkOOL, seaDefOOL;
     final UnitType type;
-    public static final List<Unit> seaAtkOOLUnits = Stream.of(values())
+    public static final int[] seaAtkOOLUnitsInt = Stream.of(values())
             .filter(x -> x.type == UnitType.SEA || x.type == UnitType.AIR)
             .sorted(Combat.casualtyComparator(false, true))
-            .collect(Collectors.toList());
-    public static final List<Unit> seaDefOOLUnits = Stream.of(values())
+            .mapToInt(Enum::ordinal)
+            .toArray();
+    public static final int[] seaDefOOLUnitsInt = Stream.of(values())
             .filter(x -> x.type == UnitType.SEA || x == FIGHTER)
             .sorted(Combat.casualtyComparator(true, true))
-            .collect(Collectors.toList());
-    public static final List<Unit> landAtkOOLUnits = Stream.of(values())
+            .mapToInt(Enum::ordinal)
+            .toArray();
+    public static final int[] landAtkOOLUnitsInt = Stream.of(values())
             .filter(x -> x.type == UnitType.LAND || x.type == UnitType.AIR)
             .sorted(Combat.casualtyComparator(false, false))
-            .collect(Collectors.toList());
-    public static final List<Unit> landDefOOLUnits = Stream.of(values())
+            .mapToInt(Enum::ordinal)
+            .toArray();
+    public static final int[] landDefOOLUnitsInt = Stream.of(values())
             .filter(x -> x.type == UnitType.LAND || x.type == UnitType.AIR)
             .sorted(Combat.casualtyComparator(true, false))
-            .collect(Collectors.toList());
+            .mapToInt(Enum::ordinal)
+            .toArray();
+    public static final Unit[] seaAtkOOLUnits = Stream.of(values())
+            .filter(x -> x.type == UnitType.SEA || x.type == UnitType.AIR)
+            .sorted(Combat.casualtyComparator(false, true))
+            .toArray(Unit[]::new);
+    public static final Unit[] seaDefOOLUnits = Stream.of(values())
+            .filter(x -> x.type == UnitType.SEA || x == FIGHTER)
+            .sorted(Combat.casualtyComparator(true, true))
+            .toArray(Unit[]::new);
+    public static final Unit[] landAtkOOLUnits = Stream.of(values())
+            .filter(x -> x.type == UnitType.LAND || x.type == UnitType.AIR)
+            .sorted(Combat.casualtyComparator(false, false))
+            .toArray(Unit[]::new);
+    public static final Unit[] landDefOOLUnits = Stream.of(values())
+            .filter(x -> x.type == UnitType.LAND || x.type == UnitType.AIR)
+            .sorted(Combat.casualtyComparator(true, false))
+            .toArray(Unit[]::new);
 
     Unit(int a, int d, int landAtkOOL, int landDefOOL, int seaAtkOOl,
          int seaDefOOL, UnitType type) {
@@ -50,7 +68,12 @@ public enum Unit {
         return hits;
     }
 
-    public static List<Unit> getUnitOrder(boolean defense, boolean seaBattle) {
+    public static int[] getUnitIntOrder(boolean defense, boolean seaBattle) {
+        return seaBattle ? defense ? seaDefOOLUnitsInt : seaAtkOOLUnitsInt :
+                defense ? landDefOOLUnitsInt : landAtkOOLUnitsInt;
+    }
+
+    public static Unit[] getUnitOrder(boolean defense, boolean seaBattle) {
         return seaBattle ? defense ? seaDefOOLUnits : seaAtkOOLUnits :
                 defense ? landDefOOLUnits : landAtkOOLUnits;
     }
