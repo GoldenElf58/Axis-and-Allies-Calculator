@@ -10,7 +10,7 @@ public enum Unit {
     CARRIER(1, 2, 0, 0, 4, 4, UnitType.SEA),
     BATTLESHIP(4, 4, 0, 0, 6, 5, UnitType.SEA);
 
-    final int attack, defense, landAtkOOL, landDefOOL, seaAtkOOL, seaDefOOL;
+    final byte attack, defense, landAtkOOL, landDefOOL, seaAtkOOL, seaDefOOL;
     final UnitType type;
     public static final int[] seaAtkOOLUnitsInt = Stream.of(values())
             .filter(x -> x.type == UnitType.SEA || x.type == UnitType.AIR)
@@ -51,18 +51,18 @@ public enum Unit {
 
     Unit(int a, int d, int landAtkOOL, int landDefOOL, int seaAtkOOl,
          int seaDefOOL, UnitType type) {
-        attack = a;
-        defense = d;
-        this.landAtkOOL = landAtkOOL;
-        this.landDefOOL = landDefOOL;
-        this.seaAtkOOL = seaAtkOOl;
-        this.seaDefOOL = seaDefOOL;
+        this.attack = (byte) a;
+        this.defense = (byte) d;
+        this.landAtkOOL = (byte) landAtkOOL;
+        this.landDefOOL = (byte) landDefOOL;
+        this.seaAtkOOL = (byte) seaAtkOOl;
+        this.seaDefOOL = (byte) seaDefOOL;
         this.type = type;
     }
 
-    int rollHits(boolean attacking, int numRolls) {
-        int power = attacking ? attack : defense;
-        int hits = 0;
+    byte rollHits(boolean attacking, byte numRolls) {
+        byte power = attacking ? attack : defense;
+        byte hits = 0;
         for (int i = 0; i < numRolls; i++)
             if (Random.nextInt(6) < power) hits++;
         return hits;

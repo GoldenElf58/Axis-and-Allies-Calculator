@@ -18,30 +18,30 @@ public enum Battle {
 
     public final boolean ask;
     public boolean seaBattle;
-    public int aInf, aTank, aFig, aBom, aSub, aDes, aACC, aBat;
-    public int dInf, dTank, dFig, dBom, dSub, dDes, dACC, dBat;
+    public byte aInf, aTank, aFig, aBom, aSub, aDes, aACC, aBat;
+    public byte dInf, dTank, dFig, dBom, dSub, dDes, dACC, dBat;
 
     Battle(boolean seaBattle, int aInf, int aTank, int aFig, int aBom, int aSub, int aDes,
            int aACC, int aBat, int dInf, int dTank, int dFig, int dBom, int dSub, int dDes,
            int dACC, int dBat) {
         this.ask = false;
         this.seaBattle = seaBattle;
-        this.aInf = aInf;
-        this.aTank = aTank;
-        this.aFig = aFig;
-        this.aBom = aBom;
-        this.aSub = aSub;
-        this.aDes = aDes;
-        this.aACC = aACC;
-        this.aBat = aBat;
-        this.dInf = dInf;
-        this.dTank = dTank;
-        this.dFig = dFig;
-        this.dBom = dBom;
-        this.dSub = dSub;
-        this.dDes = dDes;
-        this.dACC = dACC;
-        this.dBat = dBat;
+        this.aInf = (byte) aInf;
+        this.aTank = (byte) aTank;
+        this.aFig = (byte) aFig;
+        this.aBom = (byte) aBom;
+        this.aSub = (byte) aSub;
+        this.aDes = (byte) aDes;
+        this.aACC = (byte) aACC;
+        this.aBat = (byte) aBat;
+        this.dInf = (byte) dInf;
+        this.dTank = (byte) dTank;
+        this.dFig = (byte) dFig;
+        this.dBom = (byte) dBom;
+        this.dSub = (byte) dSub;
+        this.dDes = (byte) dDes;
+        this.dACC = (byte) dACC;
+        this.dBat = (byte) dBat;
     }
 
     Battle() {
@@ -64,21 +64,21 @@ public enum Battle {
             String s = sc.nextLine().trim();
             defenders.put(u, s.isEmpty() ? 0 : Integer.parseInt(s));
         }
-        this.aInf = attackers.getOrDefault(Unit.INFANTRY, 0);
-        this.aTank = attackers.getOrDefault(Unit.TANK, 0);
-        this.aFig = attackers.getOrDefault(Unit.FIGHTER, 0);
-        this.aBom = attackers.getOrDefault(Unit.BOMBER, 0);
-        this.aSub = attackers.getOrDefault(Unit.SUBMARINE, 0);
-        this.aDes = attackers.getOrDefault(Unit.DESTROYER, 0);
-        this.aACC = attackers.getOrDefault(Unit.CARRIER, 0);
-        this.aBat = attackers.getOrDefault(Unit.BATTLESHIP, 0);
-        this.dInf = defenders.getOrDefault(Unit.INFANTRY, 0);
-        this.dTank = defenders.getOrDefault(Unit.TANK, 0);
-        this.dFig = defenders.getOrDefault(Unit.FIGHTER, 0);
-        this.dBom = defenders.getOrDefault(Unit.BOMBER, 0);
-        this.dSub = defenders.getOrDefault(Unit.SUBMARINE, 0);
-        this.dDes = defenders.getOrDefault(Unit.DESTROYER, 0);
-        this.dACC = defenders.getOrDefault(Unit.CARRIER, 0);
-        this.dBat = defenders.getOrDefault(Unit.BATTLESHIP, 0);
+        this.aInf = (byte) (int) attackers.getOrDefault(Unit.INFANTRY, 0);
+        this.aTank = (byte) (int) attackers.getOrDefault(Unit.TANK, 0);
+        this.aFig = (byte) (int) attackers.getOrDefault(Unit.FIGHTER, 0);
+        this.aBom = (byte) (int) attackers.getOrDefault(Unit.BOMBER, 0);
+        this.aSub = (byte) (int) attackers.getOrDefault(Unit.SUBMARINE, 0);
+        this.aDes = (byte) (int) attackers.getOrDefault(Unit.DESTROYER, 0);
+        this.aACC = (byte) (int) attackers.getOrDefault(Unit.CARRIER, 0);
+        this.aBat = (byte) (int) attackers.getOrDefault(Unit.BATTLESHIP, 0);
+        this.dInf = (byte) (int) defenders.getOrDefault(Unit.INFANTRY, 0);
+        this.dTank = (byte) (int) defenders.getOrDefault(Unit.TANK, 0);
+        this.dFig = (byte) (int) defenders.getOrDefault(Unit.FIGHTER, 0);
+        this.dBom = (byte) (int) defenders.getOrDefault(Unit.BOMBER, 0);
+        this.dSub = (byte) (int) defenders.getOrDefault(Unit.SUBMARINE, 0);
+        this.dDes = (byte) (int) defenders.getOrDefault(Unit.DESTROYER, 0);
+        this.dACC = (byte) (int) defenders.getOrDefault(Unit.CARRIER, 0);
+        this.dBat = (byte) (int) defenders.getOrDefault(Unit.BATTLESHIP, 0);
     }
 }
