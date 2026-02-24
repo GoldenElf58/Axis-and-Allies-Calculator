@@ -1,16 +1,16 @@
 import java.util.stream.Stream;
 
 public enum Unit {
-    INFANTRY(1, 2, 1, 1, 0, 0, UnitType.LAND),
-    TANK(3, 3, 2, 2, 0, 0, UnitType.LAND),
-    FIGHTER(3, 4, 3, 4, 3, 3, UnitType.AIR),
-    BOMBER(4, 1, 4, 3, 5, 0, UnitType.AIR),
-    SUBMARINE(2, 1, 0, 0, 1, 1, UnitType.SEA),
-    DESTROYER(2, 2, 0, 0, 2, 2, UnitType.SEA),
-    CARRIER(1, 2, 0, 0, 4, 4, UnitType.SEA),
-    BATTLESHIP(4, 4, 0, 0, 6, 5, UnitType.SEA);
+    INFANTRY    ( 3, 1, 2, 1, 1, 0, 0, UnitType.LAND),
+    TANK        ( 6, 3, 3, 2, 2, 0, 0, UnitType.LAND),
+    FIGHTER     (10, 3, 4, 3, 4, 3, 3, UnitType.AIR),
+    BOMBER      (12, 4, 1, 4, 3, 5, 0, UnitType.AIR),
+    SUBMARINE   ( 6, 2, 1, 0, 0, 1, 1, UnitType.SEA),
+    DESTROYER   ( 8, 2, 2, 0, 0, 2, 2, UnitType.SEA),
+    CARRIER     (12, 1, 2, 0, 0, 4, 4, UnitType.SEA),
+    BATTLESHIP  (16, 4, 4, 0, 0, 6, 5, UnitType.SEA);
 
-    final int attack, defense, landAtkOOL, landDefOOL, seaAtkOOL, seaDefOOL;
+    final byte cost, attack, defense, landAtkOOL, landDefOOL, seaAtkOOL, seaDefOOL;
     final UnitType type;
     public static final int[] seaAtkOOLUnitsInt = Stream.of(values())
             .filter(x -> x.type == UnitType.SEA || x.type == UnitType.AIR)
@@ -49,20 +49,21 @@ public enum Unit {
             .sorted(Combat.casualtyComparator(true, false))
             .toArray(Unit[]::new);
 
-    Unit(int a, int d, int landAtkOOL, int landDefOOL, int seaAtkOOl,
+    Unit(int c, int a, int d, int landAtkOOL, int landDefOOL, int seaAtkOOl,
          int seaDefOOL, UnitType type) {
-        attack = a;
-        defense = d;
-        this.landAtkOOL = landAtkOOL;
-        this.landDefOOL = landDefOOL;
-        this.seaAtkOOL = seaAtkOOl;
-        this.seaDefOOL = seaDefOOL;
+        cost = (byte) c;
+        attack = (byte) a;
+        defense = (byte) d;
+        this.landAtkOOL = (byte) landAtkOOL;
+        this.landDefOOL = (byte) landDefOOL;
+        this.seaAtkOOL = (byte) seaAtkOOl;
+        this.seaDefOOL = (byte) seaDefOOL;
         this.type = type;
     }
 
     int rollHits(boolean attacking, int numRolls) {
-        int power = attacking ? attack : defense;
-        int hits = 0;
+        byte power = attacking ? attack : defense;
+        byte hits = 0;
         for (int i = 0; i < numRolls; i++)
             if (Random.nextInt(6) < power) hits++;
         return hits;

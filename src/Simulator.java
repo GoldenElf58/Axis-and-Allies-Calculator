@@ -20,7 +20,12 @@ public class Simulator {
                         ("Def 1 win rate: " + ((int) (defWin1Rate * 1000 + 0.5)) / 10.0) + "%\n" +
                         ("Def 2 win rate: " + ((int) (defWin2Rate * 1000 + 0.5)) / 10.0) + "%\n";
             }
+
+
+        public String toLine() {
+            return "" + atkWin1Rate + '\t' + defWin1Rate + '\t' + atkWin2Rate + '\t' + defWin2Rate;
         }
+    }
 
     public static SimulationResult simulate(Battle battle, int minSims, double timeLimit,
                                             double maxMOE, boolean debug, int nDebug) {

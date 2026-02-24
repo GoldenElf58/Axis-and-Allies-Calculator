@@ -3,7 +3,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 public enum Battle {
-    ASK,
+    ASK(true),
+    MANUAL(false),
     LAND_1(false, 5, 2, 1, 1, 0, 0, 0, 0, 5, 1, 1, 1, 0, 0, 0, 0),
     SEA_1(true, 0, 0, 1, 1, 2, 2, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1),
     SEA_2(true, 0, 0, 1, 1, 2, 2, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1),
@@ -44,8 +45,8 @@ public enum Battle {
         this.dBat = dBat;
     }
 
-    Battle() {
-        this.ask = true;
+    Battle(boolean ask) {
+        this.ask = ask;
     }
 
     public void getBattle() {
@@ -80,5 +81,36 @@ public enum Battle {
         this.dDes = defenders.getOrDefault(Unit.DESTROYER, 0);
         this.dACC = defenders.getOrDefault(Unit.CARRIER, 0);
         this.dBat = defenders.getOrDefault(Unit.BATTLESHIP, 0);
+    }
+
+    @Override
+    public String toString() {
+        return "" + aInf + '\t' + aTank + '\t' + aFig + '\t' + aBom + '\t' + aSub + '\t' + aDes +
+                '\t' + aACC + '\t' + aBat + '\t' + dInf + '\t' + dTank + '\t' + dFig + '\t' + dBom +
+                '\t' + dSub + '\t' + dDes + '\t' + dACC + '\t' + dBat + '\t' + seaBattle;
+    }
+
+    public int totalAttackerIPC() {
+        return aInf * Unit.INFANTRY.cost + aTank * Unit.TANK.cost + aFig * Unit.FIGHTER.cost +
+                aBom * Unit.BOMBER.cost + aSub * Unit.SUBMARINE.cost + aDes * Unit.DESTROYER.cost +
+                aACC * Unit.CARRIER.cost + aBat * Unit.BATTLESHIP.cost;
+    }
+
+    public int totalDefenderIPC() {
+        return dInf * Unit.INFANTRY.cost + dTank * Unit.TANK.cost + dFig * Unit.FIGHTER.cost +
+                dBom * Unit.BOMBER.cost + dSub * Unit.SUBMARINE.cost + dDes * Unit.DESTROYER.cost +
+                dACC * Unit.CARRIER.cost + dBat * Unit.BATTLESHIP.cost;
+    }
+
+    public int totalAttackerAttack() {
+        return aInf * Unit.INFANTRY.attack + aTank * Unit.TANK.attack + aFig * Unit.FIGHTER.attack +
+                aBom * Unit.BOMBER.attack + aSub * Unit.SUBMARINE.attack + aDes * Unit.DESTROYER.attack +
+                aACC * Unit.CARRIER.attack + aBat * Unit.BATTLESHIP.attack;
+    }
+
+    public int totalDefenderDefense() {
+        return dInf * Unit.INFANTRY.defense + dTank * Unit.TANK.defense + dFig * Unit.FIGHTER.defense +
+                dBom * Unit.BOMBER.defense + dSub * Unit.SUBMARINE.defense + dDes * Unit.DESTROYER.defense +
+                dACC * Unit.CARRIER.defense + dBat * Unit.BATTLESHIP.defense;
     }
 }
