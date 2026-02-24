@@ -63,8 +63,8 @@ public enum Unit {
 
     int rollHits(boolean attacking, int numRolls) {
         byte power = attacking ? attack : defense;
-        byte hits = 0;
-        for (int i = 0; i < numRolls; i++)
+        int hits = 0;
+        for (int i = numRolls; i > 0; i--)
             if (Random.nextInt(6) < power) hits++;
         return hits;
     }

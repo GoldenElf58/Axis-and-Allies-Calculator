@@ -10,20 +10,21 @@ public class Main {
     static final int MIN_SIMS = 3000;
     static final boolean DEBUG = false;
     static final int N_DEBUG = 10;
-    static final boolean BENCHMARK = false;
-    static final boolean SIMULATE = true;
+    static final boolean BENCHMARK = true;
+    static final boolean SIMULATE = false;
     static final int MAX_IPC = 30;
 
-    static final Battle battle = Battle.LAND_1;
+    static final Battle battle = Battle.SEA_LONG;
 
     public static void main(String[] args) {
         if (battle.ask) battle.getBattle();
         if (BENCHMARK && !DEBUG) {
             System.out.println("Warm up...");
-            Simulator.simulate(battle, MIN_SIMS * 1000, 10 * TIME_LIMIT_MS,
-                    WINRATE_MAX_MOE, false, 0);
+            for (int i = 0; i < 5; i++)
+                Simulator.simulate(battle, MIN_SIMS * 100, 10 * TIME_LIMIT_MS,
+                        WINRATE_MAX_MOE, false, 0);
             System.out.println("Warm Up Complete");
-            int n = 500;
+            int n = 5000;
             long start = System.nanoTime();
             for (int i = 0; i < n; i++)
                 Simulator.simulate(battle, MIN_SIMS, TIME_LIMIT_MS, WINRATE_MAX_MOE, DEBUG, N_DEBUG);
@@ -84,7 +85,7 @@ public class Main {
                 if (isValidBattle(attackers, defenders, landBattle)) {
                     if (!attackersExact && calculateIPC(attackers, landBattle) == calculateIPC(defenders, landBattle))
                         continue;
-                    
+
                     Battle battle = createBattleFromUnits(attackers, defenders, landBattle);
                     String result = Simulator.simulate(battle, MIN_SIMS, TIME_LIMIT_MS,
                             WINRATE_MAX_MOE, DEBUG, N_DEBUG).toLine();
@@ -100,7 +101,7 @@ public class Main {
     }
 
     private static List<byte[]> generateUnitCombinations(int maxIPC, boolean exact,
-                                                      boolean landBattle) {
+                                                         boolean landBattle) {
         List<byte[]> combinations = new ArrayList<>();
         Unit[] units = landBattle ?
                 new Unit[]{Unit.INFANTRY, Unit.TANK, Unit.FIGHTER, Unit.BOMBER} :
@@ -182,7 +183,7 @@ public class Main {
         Unit[] unitTypes = landBattle ?
                 new Unit[]{Unit.INFANTRY, Unit.TANK, Unit.FIGHTER, Unit.BOMBER} :
                 new Unit[]{Unit.SUBMARINE, Unit.DESTROYER, Unit.CARRIER, Unit.BATTLESHIP, Unit.FIGHTER, Unit.BOMBER};
-        
+
         int totalIPC = 0;
         for (int i = 0; i < units.length && i < unitTypes.length; i++)
             totalIPC += units[i] * unitTypes[i].cost;

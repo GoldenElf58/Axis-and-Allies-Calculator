@@ -11,6 +11,6 @@ public class Random {
     }
 
     public static int nextInt(int n) {
-        return (nextInt() >>> 1) % n;
+        return (int)(((long)(nextInt() >>> 1) * n) >>> 31);
     }
 }

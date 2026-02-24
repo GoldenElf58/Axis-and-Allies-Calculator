@@ -1,8 +1,8 @@
 public class OngoingBattle {
 
     public final boolean seaBattle;
-    public byte aInf, aTank, aFig, aBom, aSub, aDes, aACC, aBat, aExtra;
-    public byte dInf, dTank, dFig, dBom, dSub, dDes, dACC, dBat, dExtra;
+    public int aInf, aTank, aFig, aBom, aSub, aDes, aACC, aBat, aExtra;
+    public int dInf, dTank, dFig, dBom, dSub, dDes, dACC, dBat, dExtra;
 
     OngoingBattle(Battle battle) {
         this.seaBattle = battle.seaBattle;
