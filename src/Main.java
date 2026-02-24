@@ -77,10 +77,10 @@ public class Main {
 
     private static void generateAndSimulateBattles(FileWriter writer, byte ipc, boolean attackersExact,
                                                    boolean landBattle) throws IOException {
-        List<int[]> attackerCombos = generateUnitCombinations(ipc, attackersExact, landBattle);
-        List<int[]> defenderCombos = generateUnitCombinations(ipc, !attackersExact, landBattle);
-        for (int[] attackers : attackerCombos) {
-            for (int[] defenders : defenderCombos) {
+        List<byte[]> attackerCombos = generateUnitCombinations(ipc, attackersExact, landBattle);
+        List<byte[]> defenderCombos = generateUnitCombinations(ipc, !attackersExact, landBattle);
+        for (byte[] attackers : attackerCombos) {
+            for (byte[] defenders : defenderCombos) {
                 if (isValidBattle(attackers, defenders, landBattle)) {
                     if (!attackersExact && calculateIPC(attackers, landBattle) == calculateIPC(defenders, landBattle))
                         continue;
@@ -99,20 +99,22 @@ public class Main {
         }
     }
 
-    private static List<int[]> generateUnitCombinations(int maxIPC, boolean exact, boolean landBattle) {
-        List<int[]> combinations = new ArrayList<>();
+    private static List<byte[]> generateUnitCombinations(int maxIPC, boolean exact,
+                                                      boolean landBattle) {
+        List<byte[]> combinations = new ArrayList<>();
         Unit[] units = landBattle ?
                 new Unit[]{Unit.INFANTRY, Unit.TANK, Unit.FIGHTER, Unit.BOMBER} :
                 new Unit[]{Unit.SUBMARINE, Unit.DESTROYER, Unit.CARRIER, Unit.BATTLESHIP,
                         Unit.FIGHTER, Unit.BOMBER};
 
-        generateCombinationsRecursive(units, 0, new int[units.length], 0, maxIPC, exact, combinations);
+        generateCombinationsRecursive(units, 0, new byte[units.length], 0, maxIPC, exact,
+                combinations);
         return combinations;
     }
 
-    private static void generateCombinationsRecursive(Unit[] units, int index, int[] current,
+    private static void generateCombinationsRecursive(Unit[] units, int index, byte[] current,
                                                       int currentIPC, int maxIPC, boolean exact,
-                                                      List<int[]> combinations) {
+                                                      List<byte[]> combinations) {
         if (index == units.length) {
             if (exact ? currentIPC == maxIPC : currentIPC <= maxIPC)
                 combinations.add(current.clone());
@@ -122,7 +124,7 @@ public class Main {
         Unit unit = units[index];
         int maxCount = (maxIPC - (exact ? 0 : currentIPC)) / unit.cost;
 
-        for (int count = 0; count <= maxCount; count++) {
+        for (byte count = 0; count <= maxCount; count++) {
             current[index] = count;
             int newIPC = currentIPC + (count * unit.cost);
             if (newIPC <= maxIPC)
@@ -131,7 +133,7 @@ public class Main {
         current[index] = 0;
     }
 
-    private static boolean isValidBattle(int[] attackers, int[] defenders, boolean landBattle) {
+    private static boolean isValidBattle(byte[] attackers, byte[] defenders, boolean landBattle) {
         // Check if both sides have units
         boolean attackerHasUnits = hasUnits(attackers);
         boolean defenderHasUnits = hasUnits(defenders);
@@ -176,7 +178,7 @@ public class Main {
         return true;
     }
 
-    private static int calculateIPC(int[] units, boolean landBattle) {
+    private static int calculateIPC(byte[] units, boolean landBattle) {
         Unit[] unitTypes = landBattle ?
                 new Unit[]{Unit.INFANTRY, Unit.TANK, Unit.FIGHTER, Unit.BOMBER} :
                 new Unit[]{Unit.SUBMARINE, Unit.DESTROYER, Unit.CARRIER, Unit.BATTLESHIP, Unit.FIGHTER, Unit.BOMBER};
@@ -187,12 +189,13 @@ public class Main {
         return totalIPC;
     }
 
-    private static boolean hasUnits(int[] units) {
+    private static boolean hasUnits(byte[] units) {
         for (int count : units) if (count > 0) return true;
         return false;
     }
 
-    private static Battle createBattleFromUnits(int[] attackers, int[] defenders, boolean landBattle) {
+    private static Battle createBattleFromUnits(byte[] attackers, byte[] defenders,
+                                                boolean landBattle) {
         Battle battle = Battle.MANUAL;
         battle.seaBattle = !landBattle;
 
