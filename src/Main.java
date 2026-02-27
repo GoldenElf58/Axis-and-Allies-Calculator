@@ -24,7 +24,7 @@ public class Main {
                 Simulator.simulate(battle, MIN_SIMS * 100, 10 * TIME_LIMIT_MS,
                         WINRATE_MAX_MOE, false, 0);
             System.out.println("Warm Up Complete");
-            int n = 5000;
+            int n = 1000;
             long start = System.nanoTime();
             for (int i = 0; i < n; i++)
                 Simulator.simulate(battle, MIN_SIMS, TIME_LIMIT_MS, WINRATE_MAX_MOE, DEBUG, N_DEBUG);
