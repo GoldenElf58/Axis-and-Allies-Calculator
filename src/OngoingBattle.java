@@ -35,7 +35,7 @@ public class OngoingBattle {
     }
 
     public Combat.Hits rollAttackerHits(boolean subsOnly, boolean noSubs) {
-        Combat.Hits hits = new Combat.Hits();
+        Combat.Hits hits = Combat.HitsPool.acquire();
         if (!noSubs) hits.subHits += Unit.SUBMARINE.rollHits(true, aSub);
         if (!subsOnly) {
             if (!seaBattle) {
@@ -54,7 +54,7 @@ public class OngoingBattle {
     }
 
     public Combat.Hits rollDefenderHits(boolean subsOnly, boolean noSubs) {
-        Combat.Hits hits = new Combat.Hits();
+        Combat.Hits hits = Combat.HitsPool.acquire();
         if (!noSubs) hits.subHits += Unit.SUBMARINE.rollHits(false, dSub);
         if (!subsOnly) {
             if (!seaBattle) {

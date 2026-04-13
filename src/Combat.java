@@ -35,6 +35,12 @@ public class Combat {
             return true;
         }
 
+        public void reset() {
+            airHits = 0;
+            subHits = 0;
+            otherHits = 0;
+        }
+
         @Override
         public String toString() {
             return "Hits(" +
@@ -42,6 +48,26 @@ public class Combat {
                     ", subHits=" + subHits +
                     ", otherHits=" + otherHits +
                     ')';
+        }
+    }
+
+    public static class HitsPool {
+        private static final Hits hitsA = new Hits(), hitsB = new Hits();
+        private static boolean isAUsable = true;
+
+        public static Hits acquire() {
+            if (isAUsable) {
+                isAUsable = false;
+                return hitsA;
+            }
+            return hitsB;
+        }
+
+        public static void freeAll() {
+            if (isAUsable) return;
+            hitsA.reset();
+            hitsB.reset();
+            isAUsable = true;
         }
     }
 
@@ -93,6 +119,7 @@ public class Combat {
                 if (debug) System.out.println(battle);
                 if (subStrikeA) defenderHasDestroyer = battle.dDes > 0;
                 if (subStrikeD) attackerHasDestroyer = battle.aDes > 0;
+                HitsPool.freeAll();
             }
 
             Hits aHits = battle.rollAttackerHits(false, subStrikeA);
@@ -105,6 +132,7 @@ public class Combat {
                 System.out.println(battle);
                 System.out.println("Hits: " + aHits + ", " + dHits);
             }
+            HitsPool.freeAll();
         }
 
         Result r = new Result();
