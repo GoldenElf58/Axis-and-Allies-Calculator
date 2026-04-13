@@ -12,26 +12,30 @@ public enum Unit {
 
     final byte cost, attack, defense, landAtkOOL, landDefOOL, seaAtkOOL, seaDefOOL;
     final UnitType type;
-    public static final int[] seaAtkOOLUnitsInt = Stream.of(values())
+    public static final byte[] seaAtkOOLByte = convertToPrimitive(Stream.of(values())
             .filter(x -> x.type == UnitType.SEA || x.type == UnitType.AIR)
             .sorted(Combat.casualtyComparator(false, true))
             .mapToInt(Enum::ordinal)
-            .toArray();
-    public static final int[] seaDefOOLUnitsInt = Stream.of(values())
+            .mapToObj(i -> (byte) i)
+            .toArray(Byte[]::new));
+    public static final byte[] seaDefOOLByte = convertToPrimitive(Stream.of(values())
             .filter(x -> x.type == UnitType.SEA || x == FIGHTER)
             .sorted(Combat.casualtyComparator(true, true))
             .mapToInt(Enum::ordinal)
-            .toArray();
-    public static final int[] landAtkOOLUnitsInt = Stream.of(values())
+            .mapToObj(i -> (byte) i)
+            .toArray(Byte[]::new));
+    public static final byte[] landAtkOOLByte = convertToPrimitive(Stream.of(values())
             .filter(x -> x.type == UnitType.LAND || x.type == UnitType.AIR)
             .sorted(Combat.casualtyComparator(false, false))
             .mapToInt(Enum::ordinal)
-            .toArray();
-    public static final int[] landDefOOLUnitsInt = Stream.of(values())
+            .mapToObj(i -> (byte) i)
+            .toArray(Byte[]::new));
+    public static final byte[] landDefOOLByte = convertToPrimitive(Stream.of(values())
             .filter(x -> x.type == UnitType.LAND || x.type == UnitType.AIR)
             .sorted(Combat.casualtyComparator(true, false))
             .mapToInt(Enum::ordinal)
-            .toArray();
+            .mapToObj(i -> (byte) i)
+            .toArray(Byte[]::new));
     public static final Unit[] seaAtkOOLUnits = Stream.of(values())
             .filter(x -> x.type == UnitType.SEA || x.type == UnitType.AIR)
             .sorted(Combat.casualtyComparator(false, true))
@@ -69,9 +73,17 @@ public enum Unit {
         return hits;
     }
 
-    public static int[] getUnitIntOrder(boolean defense, boolean seaBattle) {
-        return seaBattle ? defense ? seaDefOOLUnitsInt : seaAtkOOLUnitsInt :
-                defense ? landDefOOLUnitsInt : landAtkOOLUnitsInt;
+    public static byte[] getUnitIntOrder(boolean defense, boolean seaBattle) {
+        return seaBattle ? defense ? seaDefOOLByte : seaAtkOOLByte :
+                defense ? landDefOOLByte : landAtkOOLByte;
+    }
+
+    private static byte[] convertToPrimitive(Byte[] boxed) {
+        byte[] prim = new byte[boxed.length];
+        for (int i = 0; i < boxed.length; i++) {
+            prim[i] = boxed[i];
+        }
+        return prim;
     }
 
     public static Unit[] getUnitOrder(boolean defense, boolean seaBattle) {
